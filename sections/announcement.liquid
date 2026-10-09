@@ -1,0 +1,1 @@
+{% if section.settings.text != blank %}<div style="text-align:center;padding:8px;background:var(--accent);color:#fff">{{ section.settings.text | escape }}</div>{% endif %}{% schema %}{"name":"Announcement","settings":[{"type":"text","id":"text","label":"Text","default":"Welcome to our store"}],"presets":[{"name":"Announcement"}]}{% endschema %}

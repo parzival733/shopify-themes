@@ -1,0 +1,41 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "desc": {
+          "type": "description",
+          "settings": {}
+        },
+        "buy": {
+          "type": "buy",
+          "settings": {
+            "dynamic_checkout": true
+          }
+        },
+        "shipping": {
+          "type": "collapsible",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "desc",
+        "buy",
+        "shipping"
+      ]
+    },
+    "related": {
+      "type": "recommendations",
+      "settings": {}
+    },
+    "apps": {
+      "type": "apps",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "related",
+    "apps"
+  ]
+}
