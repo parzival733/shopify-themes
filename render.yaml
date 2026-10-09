@@ -1,0 +1,22 @@
+# Atelier Universal — site vitrine statique sans Shopify
+# Héberge uniquement le dossier frontend/ ; le thème Shopify Liquid demeure intact.
+services:
+  - type: web
+    name: atelier-universal-front
+    runtime: static
+    repo: https://github.com/parzival733/shopify-themes
+    branch: main
+    buildCommand: 'test -s frontend/index.html && test -s frontend/assets/css/main.css && echo "Site statique prêt"'
+    staticPublishPath: ./frontend
+    autoDeployTrigger: commit
+    buildFilter:
+      paths:
+        - frontend/**
+        - render.yaml
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin

@@ -2,6 +2,14 @@
 
 Ce dépôt contient **deux architectures distinctes** : le thème Shopify original (dossiers `assets`, `config`, `layout`, `locales`, `sections`, `snippets` et `templates`) et un **front-end autonome** en HTML, CSS et JavaScript dans `frontend/`.
 
+## Déployer la vitrine sur Render
+
+[**Déployer Atelier Universal sur Render**](https://render.com/deploy?repo=https%3A%2F%2Fgithub.com%2Fparzival733%2Fshopify-themes)
+
+Le fichier [`render.yaml`](render.yaml) déclare un **site statique** qui publie uniquement `frontend/` depuis `main`, sans Shopify, sans backend et sans étape npm. Après connexion de votre compte Render, cliquez sur le lien, vérifiez le service proposé puis confirmez **Apply / Deploy** dans l'interface Render. Render fournit une adresse `.onrender.com` **une fois le déploiement terminé** et peut mettre à jour le site à chaque nouveau commit sur `main`.
+
+L'application Render dans ChatGPT doit également être **installée et connectée** pour que ChatGPT puisse contrôler directement le service. Sans cette connexion, le déploiement doit être autorisé depuis le tableau de bord Render.
+
 ## Site web indépendant de Shopify
 
 Lancer le site de vitrine : ouvrez `frontend/index.html` avec un serveur statique (par exemple `python3 -m http.server --directory frontend 8000`). Les modules ES exigent un serveur HTTP dans la plupart des navigateurs.
