@@ -2,9 +2,23 @@ name: Shopify Theme Check
 
 on:
   push:
-    branches:
-      - main
+    paths:
+      - 'assets/**'
+      - 'config/**'
+      - 'layout/**'
+      - 'locales/**'
+      - 'sections/**'
+      - 'snippets/**'
+      - 'templates/**'
   pull_request:
+    paths:
+      - 'assets/**'
+      - 'config/**'
+      - 'layout/**'
+      - 'locales/**'
+      - 'sections/**'
+      - 'snippets/**'
+      - 'templates/**'
   workflow_dispatch:
 
 permissions:
@@ -12,19 +26,11 @@ permissions:
 
 jobs:
   theme-check:
-    name: Validate theme Liquid and JSON
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout theme
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '22'
-
-      - name: Install Shopify CLI and theme support
-        run: npm install --global @shopify/cli @shopify/theme
-
-      - name: Run Theme Check
-        run: shopify theme check --fail-level error
+      - run: npm install --global @shopify/cli @shopify/theme
+      - run: shopify theme check --fail-level error

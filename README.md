@@ -1,37 +1,21 @@
-# Atelier Universal — Shopify OS 2.0 theme
+# Atelier Universal — Shopify theme + static front-end
 
-Base de thème Shopify Online Store 2.0 pour boutiques multi-catégories : Liquid, sections configurables, modèles JSON, collections, produits, FAQ, contact, blog, recherche prédictive, panier AJAX et blocs d'applications.
+Ce dépôt contient **deux architectures distinctes** : le thème Shopify original (dossiers `assets`, `config`, `layout`, `locales`, `sections`, `snippets` et `templates`) et un **front-end autonome** en HTML, CSS et JavaScript dans `frontend/`.
 
-## Mettre le thème en ligne via GitHub
+## Site web indépendant de Shopify
 
-**Shopify est l'hébergeur du thème et du checkout**. GitHub conserve et synchronise le code ; GitHub Pages ne peut pas exécuter un thème Shopify Liquid.
+Lancer le site de vitrine : ouvrez `frontend/index.html` avec un serveur statique (par exemple `python3 -m http.server --directory frontend 8000`). Les modules ES exigent un serveur HTTP dans la plupart des navigateurs.
 
-L'intégration officielle Shopify GitHub permet de connecter directement la branche `main` au catalogue de thèmes d'une boutique, sans système de déploiement maison.
+Déploiement automatique à l'aide de GitHub Pages : `.github/workflows/deploy-frontend.yml`.
 
-1. Connectez-vous au **Shopify Admin** de votre boutique.
-2. Ouvrez **Boutique en ligne > Thèmes**.
-3. Dans la bibliothèque de thèmes, choisissez **Ajouter un thème > Connecter depuis GitHub**.
-4. Autorisez l'application **Shopify GitHub** à accéder au dépôt (sélectionnez `parzival733/shopify-themes`).
-5. Sélectionnez le compte `parzival733`, le dépôt `shopify-themes` et la branche `main`.
-6. Le thème apparaît dans la bibliothèque **sans remplacer immédiatement le thème publié**. Ouvrez son aperçu, configurez les menus, collections, pages légales et paramètres, puis testez les parcours de commande.
-7. Lorsque tous les tests sont satisfaisants, cliquez **Publier** dans Shopify. Le thème connecté reste synchronisé avec GitHub.
+**À faire une seule fois par le propriétaire** : `Settings > Pages > Source : GitHub Actions`, puis lancer `Deploy Atelier Frontend` dans l'onglet Actions. Une fois la publication réussie : https://parzival733.github.io/shopify-themes/.
 
-Consultez [le guide de publication](docs/PUBLICATION-SHOPIFY.md) et [la checklist de lancement](docs/LAUNCH-CHECKLIST.md) avant toute mise en production.
+Toutes les informations dans [docs/FRONTEND.md](docs/FRONTEND.md).
 
-**Documentation Shopify officielle :** https://shopify.dev/docs/storefronts/themes/tools/github
+## Origine du thème Shopify
 
-## Qualité et tests
+Le thème Liquid Online Store 2.0 reste présent et n'est pas touché. Sa publication chez Shopify n'est plus l'objectif du dépôt. Voir [docs/LAUNCH-CHECKLIST.md](docs/LAUNCH-CHECKLIST.md) pour son état et ses limites.
 
-Une workflow GitHub Actions est ajoutée pour lancer `shopify theme check --fail-level error` lors des commits et pull requests. Vérifiez le statut dans l'onglet **Actions** du dépôt. Vous pouvez également exécuter localement :
+## Avertissement
 
-```bash
-npm install -g @shopify/cli
-shopify theme check
-shopify theme dev --store votre-boutique.myshopify.com
-```
-
-## État du projet
-
-Il s'agit d'une **base fonctionnelle en développement et non d'un thème certifié prêt à vendre**. Aucune boutique réelle, aucun paiement, aucun indicateur Lighthouse ni audit WCAG 2.2 AA n'ont encore été testés depuis ce dépôt. Les sélecteurs de variantes au-delà de 250 variantes, l'internationalisation exhaustive, la conformité RGPD et le retrait en magasin doivent encore faire l'objet de validations ou d'améliorations spécifiques.
-
-Le modèle de carte-cadeau et un extrait d'informations de retrait sont présents, mais doivent être testés et intégrés correctement dans une boutique. Ne publiez pas sans effectuer les vérifications nécessaires.
+Le nouveau site est une **vitrine** : produits et prix fictifs, panier local sans paiement, formulaire de contact et newsletter non reliés à un backend. Les photos proviennent d'Unsplash sous licence d'utilisation gratuite ; elles ne représentent pas des articles réellement en vente. Le site de démonstration porte un indicateur `noindex`.
