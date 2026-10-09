@@ -1,44 +1,34 @@
-# Atelier Universal — Site front-end statique
+# Déploiement du front-end Atelier Universal via GitHub Pages
 
-## Architecture conservée
+## URL publique
 
-Tous les dossiers existants `layout/`, `sections/`, `snippets/`, `templates/`, `config/`, `locales/` et `assets/` restent inchangés : le thème Shopify n'est ni supprimé ni modifié. Le site autonome vit en parallèle :
+**https://parzival733.github.io/shopify-themes/**
 
-```
-frontend/
-  index.html                 # Shell du site, header/footer et overlays
-  404.html                   # Page de secours
-  .nojekyll                  # Fichiers statiques livrés tels quels
-  assets/css/main.css       # Design system responsive et accessible
-  assets/js/catalog.js      # Collections, prix fictifs et photos Unsplash
-  assets/js/app.js          # Navigation, recherche, tri, fiches et panier
-```
+Le workflow automatique GitHub Pages a confirmé le déploiement de la branche `gh-pages` : https://github.com/parzival733/shopify-themes/actions/runs/37999033513.
 
-Aucune dépendance npm, aucun backend ni connexion Shopify pour cette vitrine.
+## Architecture
 
-## Mettre le site en ligne avec GitHub Pages
+Le thème Shopify d'origine sur `main` reste intact (`layout`, `templates`, `sections`, `snippets`, `assets`, `config`, `locales`).
 
-1. Sur ce dépôt GitHub, ouvrez **Settings > Pages**.
-2. Dans **Build and deployment**, choisissez **Source : GitHub Actions** (réglage effectué une seule fois par le propriétaire du dépôt).
-3. Lancez le workflow **Deploy Atelier Frontend** depuis l'onglet **Actions** (ou faites un commit dans `frontend/`).
-4. Le site se trouvera, après déploiement réussi, à : **https://parzival733.github.io/shopify-themes/**.
-5. Les modifications de `frontend/` sur `main` lanceront ensuite une nouvelle publication automatiquement.
+Le site autonome est dans `frontend/` :
 
-Le workflow vérifie que le HTML et le CSS existent et que les modules JavaScript sont syntaxiquement valides avant publication.
+- `index.html` — coquille du site avec navigation, pied de page et tiroir de panier
+- `assets/css/main.css` — mise en forme responsive
+- `assets/js/catalog.js` — photos et catalogue de démonstration
+- `assets/js/app.js` — navigation, recherche, filtres et panier local
+- `404.html` — page 404
 
-## Parcours disponibles
+La branche `gh-pages` héberge une copie du contenu de `frontend/` **à sa racine**. GitHub Pages publie directement cette branche, sans action de compilation ni intégration Shopify.
 
-- Accueil : `index.html`
-- Collections, catégories et tri : `index.html?page=collection`
-- Produit : `index.html?page=produit&id=alba`
-- Recherche : `index.html?page=recherche&q=vase`
-- Panier : `index.html?page=panier`
-- Pages éditoriales (histoire, journal, article, FAQ, contact, légal, crédits) : paramètre `page`.
+## Mettre à jour le site
 
-## Limites et intégration future
+1. Modifiez et testez `frontend/` sur `main`.
+2. Synchronisez les fichiers dans la branche `gh-pages` (sans préfixe `frontend/`) en conservant `.nojekyll`.
+3. GitHub Pages reconstruira le site automatiquement à chaque push humain ou push par une application GitHub autorisée. Attention : les pushes faits par un workflow avec le `GITHUB_TOKEN` ne déclenchent pas une nouvelle construction Pages.
+4. Contrôlez l'onglet Actions et l'adresse publique.
 
-Ce front-end est une **vitrine de démonstration, pas une boutique transactionnelle**. Les articles, prix et descriptions sont fictifs ; les photos sont illustratives et les paniers sont conservés dans `localStorage`. Pas de paiement, de commande, de newsletter ou de messages côté serveur. Aucun suivi marketing n'est installé par le site. Remplacer les produits par les données réelles d'une marque et brancher un backend pour permettre le commerce.
+Le workflow `Verify Atelier Frontend` vérifie la syntaxe des deux modules JavaScript sur `main`, mais **ne déploie pas** à lui seul.
 
-## Images et licence
+## Limites de la démonstration
 
-Les images sont chargées depuis le CDN Unsplash par URL fixe. Licence gratuite : https://unsplash.com/license. Le crédit des créateurs est apprécié. La page `index.html?page=credits` et `assets/js/catalog.js` contiennent la liste des visuels utilisés. Une vérification des droits, représentations produit et autorisations éventuelles reste nécessaire avant un usage commercial final.
+Panier, articles et prix fictifs ; aucun paiement réel ni backend, formulaire de contact et newsletter non connectés. Les photographies sont fournies par Unsplash : https://unsplash.com/license. Veiller aux droits de représentation et à la cohérence des produits avant un usage commercial.

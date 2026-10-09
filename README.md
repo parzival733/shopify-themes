@@ -1,29 +1,29 @@
-# Atelier Universal — Shopify theme + static front-end
+# Atelier Universal — Boutique front-end + thème Shopify OS 2.0
 
-Ce dépôt contient **deux architectures distinctes** : le thème Shopify original (dossiers `assets`, `config`, `layout`, `locales`, `sections`, `snippets` et `templates`) et un **front-end autonome** en HTML, CSS et JavaScript dans `frontend/`.
+**[Voir le site en ligne sur GitHub Pages](https://parzival733.github.io/shopify-themes/)**
 
-## Déployer la vitrine sur Render
+Ce dépôt préserve deux architectures indépendantes :
 
-[**Déployer Atelier Universal sur Render**](https://render.com/deploy?repo=https%3A%2F%2Fgithub.com%2Fparzival733%2Fshopify-themes)
+- **`frontend/` sur `main`** : source du site vitrine autonome en HTML, CSS et JavaScript, sans Shopify ni serveur.
+- **`gh-pages` (racine)** : version statique publiée par **GitHub Pages** à l'adresse ci-dessus.
+- **`layout/`, `sections/`, `snippets/`, `templates/`, `assets/`, `config/`, `locales/`** : thème Shopify Liquid d'origine conservé.
 
-Le fichier [`render.yaml`](render.yaml) déclare un **site statique** qui publie uniquement `frontend/` depuis `main`, sans Shopify, sans backend et sans étape npm. Après connexion de votre compte Render, cliquez sur le lien, vérifiez le service proposé puis confirmez **Apply / Deploy** dans l'interface Render. Render fournit une adresse `.onrender.com` **une fois le déploiement terminé** et peut mettre à jour le site à chaque nouveau commit sur `main`.
+## Publication GitHub Pages
 
-L'application Render dans ChatGPT doit également être **installée et connectée** pour que ChatGPT puisse contrôler directement le service. Sans cette connexion, le déploiement doit être autorisé depuis le tableau de bord Render.
+GitHub Pages est activé sur la branche `gh-pages`, à la racine. Le déploiement initial a réussi : [voir les vérifications GitHub Actions](https://github.com/parzival733/shopify-themes/actions/runs/37999033513).
 
-## Site web indépendant de Shopify
+Une nouvelle version du site doit être copiée de `frontend/` vers la racine de `gh-pages` puis publiée ; GitHub Pages la reconstruit automatiquement. L'action sur `main` vérifie le code front-end mais **ne remplace pas la version en ligne**. Si vous utilisez ChatGPT pour modifier le front-end, demandez également la synchronisation vers `gh-pages`.
 
-Lancer le site de vitrine : ouvrez `frontend/index.html` avec un serveur statique (par exemple `python3 -m http.server --directory frontend 8000`). Les modules ES exigent un serveur HTTP dans la plupart des navigateurs.
+Pour démarrer localement :
 
-Déploiement automatique à l'aide de GitHub Pages : `.github/workflows/deploy-frontend.yml`.
+```bash
+git clone https://github.com/parzival733/shopify-themes.git
+cd shopify-themes
+python3 -m http.server --directory frontend 8000
+```
 
-**À faire une seule fois par le propriétaire** : `Settings > Pages > Source : GitHub Actions`, puis lancer `Deploy Atelier Frontend` dans l'onglet Actions. Une fois la publication réussie : https://parzival733.github.io/shopify-themes/.
+Ouvrez http://localhost:8000. Plus d'informations dans [docs/FRONTEND.md](docs/FRONTEND.md).
 
-Toutes les informations dans [docs/FRONTEND.md](docs/FRONTEND.md).
+## Note importante
 
-## Origine du thème Shopify
-
-Le thème Liquid Online Store 2.0 reste présent et n'est pas touché. Sa publication chez Shopify n'est plus l'objectif du dépôt. Voir [docs/LAUNCH-CHECKLIST.md](docs/LAUNCH-CHECKLIST.md) pour son état et ses limites.
-
-## Avertissement
-
-Le nouveau site est une **vitrine** : produits et prix fictifs, panier local sans paiement, formulaire de contact et newsletter non reliés à un backend. Les photos proviennent d'Unsplash sous licence d'utilisation gratuite ; elles ne représentent pas des articles réellement en vente. Le site de démonstration porte un indicateur `noindex`.
+La vitrine utilise des photos illustratives Unsplash et des prix et produits de démonstration. Les achats, le contact, la newsletter et le paiement réel ne sont **pas** fonctionnels. Le panier est une simulation locale et aucun service Shopify n'est connecté. Vérifiez les droits d'images, la conformité et les parcours avant tout usage commercial.
