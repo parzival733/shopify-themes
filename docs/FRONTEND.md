@@ -13,7 +13,9 @@ Le thème Shopify d'origine sur `main` reste intact (`layout`, `templates`, `sec
 Le site autonome est dans `frontend/` :
 
 - `index.html` — coquille du site avec navigation, pied de page et tiroir de panier
-- `assets/css/main.css` — mise en forme responsive
+- `assets/css/main.css` — styles historiques
+- `assets/css/modern.css` — direction artistique 2026 : accents bleu cobalt `#2059E8`, bleu nuit `#0B1E43`, composants plus lisibles et cartes responsive
+- `favicon.svg` — identité visuelle bleue
 - `assets/js/catalog.js` — photos et catalogue de démonstration
 - `assets/js/app.js` — navigation, recherche, filtres et panier local
 - `404.html` — page 404
