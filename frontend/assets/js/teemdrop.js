@@ -14,7 +14,7 @@ export const teemdropProducts = [
     tag:'IDÉE CADEAU',
     description:'Un calendrier de l’Avent ludique pour patienter jusqu’à Noël : du 1er au 24 décembre, découvre chaque jour une petite surprise inspirée de l’univers Mystery Dumpling. Ces mini-jouets squishy aux personnages festifs se pressent et se malaxent comme de petites balles sensorielles. Une idée cadeau à découvrir en attendant les fêtes. Les matériaux, dimensions, variantes et avertissements du fabricant sont à confirmer.',
     materials:'24 surprises squishy · matière exacte et âge recommandé à confirmer.',
-    shippingInfo:'Les frais d’importation et d’exportation déjà engagés sont inclus dans le prix affiché. Les éventuels frais et délais de livraison au destinataire seront précisés avant l’ouverture des commandes. Aucun supplément « taxe d’exportation » ne sera ajouté.',
+    shippingInfo:'Le coût de transport à l’export déjà inclus dans l’approvisionnement est intégré au prix affiché. Les éventuels frais et délais de livraison au destinataire seront précisés avant l’ouverture des commandes. Aucun supplément « taxe d’exportation » ne sera ajouté.',
     safetyNote:'Avant commercialisation : vérifier le marquage CE, l’identité de l’opérateur responsable dans l’Union européenne, les avertissements d’âge et les documents de conformité aux règles de sécurité des jouets.'
   },
   {

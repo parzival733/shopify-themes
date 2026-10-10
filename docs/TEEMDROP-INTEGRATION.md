@@ -15,6 +15,6 @@ Pour finaliser ces fiches, transmettre un export fournisseur ou les captures int
 
 ## Calendrier de l'Avent Mystery Dumpling
 
-Le premier produit a été décrit à partir des informations transmises par le propriétaire de la boutique : calendrier de l'Avent avec 24 surprises de type squishy, tarif public **29,90 € TTC**. Le prix affiché inclut les coûts d'importation/exportation déjà supportés par le marchand. **Aucun coût d'achat confidentiel n'est enregistré dans ce dépôt public.**
+Le premier produit a été décrit à partir des informations transmises par le propriétaire de la boutique : calendrier de l'Avent avec 24 surprises de type squishy, tarif public **29,90 € TTC**. Le prix affiché intègre le coût de transport à l’export confirmé par le marchand. Les droits d’importation éventuels et le coût de la livraison finale au destinataire restent à vérifier. **Aucun coût d'achat confidentiel n'est enregistré dans ce dépôt public.**
 
 La photographie fournie n'est volontairement **pas intégrée ni copiée**. Les images officielles, composition, avertissements, conformité CE et frais de livraison jusqu'au destinataire restent à confirmer. Aucun achat réel ou simulé n'est proposé pour cette référence avant validation.
