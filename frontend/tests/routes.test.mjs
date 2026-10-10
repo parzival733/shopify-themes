@@ -50,8 +50,8 @@ for(const [i,scenario] of cases.entries()){
  if(scenario.label.startsWith('Product detail')||scenario.label.startsWith('Legacy')){
   assert.match(main.innerHTML,/class="detail"/,scenario.label+' not standard product layout');
   if(scenario.sku===ids[0]){
-   assert.match(main.innerHTML,/29,90/,scenario.label+' must show the recommended selling price');
-   assert.doesNotMatch(main.innerHTML,/Prix à confirmer/,scenario.label+' should not hide the set price');
+   assert.match(main.innerHTML,/<div class="detail-price">29,90[^<]*<span class="price-tax-note"> TTC<\/span><\/div>/,scenario.label+' must display the assigned TTC price in the product detail');
+   // Related products can still have an unpriced placeholder (the second supplier reference).
   }else{
    assert.match(main.innerHTML,/Prix à confirmer/,scenario.label+' invents a price');
   }
