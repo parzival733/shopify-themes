@@ -6,7 +6,13 @@ const $$ = (s, root=document) => [...root.querySelectorAll(s)];
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const link = (page, extras={}) => './index.html?' + new URLSearchParams({page,...extras}).toString();
 const params = new URLSearchParams(location.search);
-const page = params.get('page') || 'accueil';
+// Product pages also have stable HTML URLs, which do not rely on query parameters.
+// Keep legacy ?page=teemdrop&id= links working for existing bookmarks.
+const rawPage = params.get('page') || 'accueil';
+const staticSupplierId = document.body?.dataset?.teemdropId || location.pathname.match(/teemdrop-(\d{19})\.html$/)?.[1] || '';
+const embeddedSupplierId = rawPage.match(/(?:^|[&?])id=(\d{19})(?:$|&)/)?.[1] || '';
+const requestedSupplierId = staticSupplierId || params.get('id') || embeddedSupplierId;
+const page = teemdropById(requestedSupplierId) ? 'teemdrop' : rawPage;
 const main = $('#main');
 let cart = [];
 try { const saved = JSON.parse(localStorage.getItem('atelier-demo-cart') || '[]'); cart = Array.isArray(saved) ? saved.filter(i => productById(i.id) && Number.isInteger(i.qty) && i.qty > 0) : []; } catch (_) { cart = []; }
@@ -42,7 +48,7 @@ function teemdropPreview(){
     +'<strong>Visuel non disponible</strong><small>Photo fournisseur à ajouter</small></div>';
 }
 function teemdropCard(p){
-  const url=link('teemdrop',{id:p.id});
+  const url='./teemdrop-'+encodeURIComponent(p.id)+'.html';
   return '<article class="td-card"><a href="'+url+'" aria-label="Consulter la référence TeemDrop '+escapeHTML(p.supplierId)+'">'+teemdropPreview()+'</a>'
     +'<div class="td-card__info"><span class="td-label">Référence fournisseur · TeemDrop</span>'
     +'<h3><a href="'+url+'">'+escapeHTML(p.name)+'</a></h3>'
@@ -59,8 +65,11 @@ function teemdropSection(){
     +'</div></section>';
 }
 function teemdropPage(){
-  const p=teemdropById(params.get('id'));
-  if(!p)return notFoundPage();
+  const p=teemdropById(requestedSupplierId);
+  if(!p){
+    document.title='Références TeemDrop — Atelier Universal';
+    return pageHero('RÉFÉRENCES TEEMDROP','Découvrez les références.','Choisissez l’une des deux fiches fournisseur disponibles.')+teemdropSection();
+  }
   document.title=p.name+' — TeemDrop — Atelier Universal';
   return crumb('Références TeemDrop',p.name)
     +'<section class="section"><div class="wrap td-detail">'
