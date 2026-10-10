@@ -8,12 +8,27 @@ export const teemdropProducts = [
     supplierId:'2097149928320143360',
     supplierUrl:'https://seller.teemdrop.com/find-product/product-detail?id=2097149928320143360',
     price:29.90,
-    image:null, // Do not publish the customer-supplied reference image without approval.
-    variants:[],
-    status:'Photo et conformité à vérifier',
+    image:'./assets/images/mystery-dumpling-calendrier-coffret.webp',
+    gallery:[
+      {src:'./assets/images/mystery-dumpling-calendrier-coffret.webp',alt:'Coffret Mystery Dumpling du calendrier de l’Avent avec ses personnages squishy de Noël'},
+      {src:'./assets/images/mystery-dumpling-calendrier-24-squishies.webp',alt:'Calendrier Mystery Dumpling ouvert avec ses 24 squishies colorés'}
+    ],
+    variantName:'Christmas blind box',
+    variants:['Christmas blind box'],
+    status:'Photos produit intégrées · sécurité des jouets à confirmer',
     tag:'IDÉE CADEAU',
-    description:'Un calendrier de l’Avent ludique pour patienter jusqu’à Noël : du 1er au 24 décembre, découvre chaque jour une petite surprise inspirée de l’univers Mystery Dumpling. Ces mini-jouets squishy aux personnages festifs se pressent et se malaxent comme de petites balles sensorielles. Une idée cadeau à découvrir en attendant les fêtes. Les matériaux, dimensions, variantes et avertissements du fabricant sont à confirmer.',
-    materials:'24 surprises squishy · matière exacte et âge recommandé à confirmer.',
+    description:'Chaque jour, du 1er au 24 décembre, découvre une surprise du calendrier Mystery Dumpling. Le coffret « Christmas blind box » contient 24 petits accessoires squishy en PVC assortis aléatoirement, avec des personnages festifs à presser et à malaxer. La boîte cartonnée illustrée est pensée pour les cadeaux de Noël. Les modèles et couleurs sont aléatoires.',
+    materials:'PVC · 24 accessoires assortis · boîte cartonnée · âge recommandé à confirmer.',
+    specifications:[
+      {label:'Variante',value:'Christmas blind box'},
+      {label:'Contenu',value:'1 calendrier de l’Avent et 24 accessoires assortis'},
+      {label:'Matière',value:'PVC'},
+      {label:'Dimensions du coffret',value:'26 × 18 × 3 cm'},
+      {label:'Poids du coffret',value:'Environ 320 g'},
+      {label:'Dimensions des accessoires',value:'Environ 4 × 4 cm'},
+      {label:'Poids par accessoire',value:'Environ 13 g'},
+      {label:'Emballage',value:'Boîte cartonnée'}
+    ],
     shippingInfo:'Le coût de transport à l’export déjà inclus dans l’approvisionnement est intégré au prix affiché. Les éventuels frais et délais de livraison au destinataire seront précisés avant l’ouverture des commandes. Aucun supplément « taxe d’exportation » ne sera ajouté.',
     safetyNote:'Avant commercialisation : vérifier le marquage CE, l’identité de l’opérateur responsable dans l’Union européenne, les avertissements d’âge et les documents de conformité aux règles de sécurité des jouets.'
   },

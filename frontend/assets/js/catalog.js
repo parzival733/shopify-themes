@@ -1,4 +1,4 @@
-import {teemdropProducts} from './teemdrop.js';
+import {teemdropProducts} from './teemdrop.js?v=gallery-4';
 // All images below are sample editorial photos from Unsplash (https://unsplash.com/license).
 // Product descriptions, names, prices, labels and stock are fictitious for demonstration only.
 const photo = (id, w=1100, crop='center') => 'https://images.unsplash.com/' + id + '?auto=format&fit=crop&w=' + w + '&q=82&crop=' + crop;
@@ -43,6 +43,9 @@ export const products = [
     category:'Nouveautés',
     price:item.price ?? null,
     image:item.image ?? null,
+    gallery:item.gallery || null,
+    variantName:item.variantName || null,
+    specifications:item.specifications || [],
     description:item.description || 'Informations sur ce produit en attente. Son nom commercial, ses photos, ses caractéristiques et son prix doivent encore être vérifiés.',
     materials:item.materials || 'Caractéristiques à renseigner',
     shippingInfo:item.shippingInfo || null,
