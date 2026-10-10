@@ -34,3 +34,12 @@ Le workflow `Verify Atelier Frontend` vérifie la syntaxe des deux modules JavaS
 ## Limites de la démonstration
 
 Panier, articles et prix fictifs ; aucun paiement réel ni backend, formulaire de contact et newsletter non connectés. Les photographies sont fournies par Unsplash : https://unsplash.com/license. Veiller aux droits de représentation et à la cohérence des produits avant un usage commercial.
+
+## Édition Squishy Club / liquid glass (octobre 2026)
+
+- La vitrine visible adopte le style **Noël enfant + squishies** avec une feuille de style dédiée `frontend/assets/css/toy-glass.css`, transparences graduées et fallbacks sans `backdrop-filter`.
+- Le catalogue public ne présente que les deux références TeemDrop fournies par le marchand, sans anciens produits fictifs de décoration ou cosmétiques.
+- Le calendrier Mystery Dumpling conserve son prix de 29,90 € TTC et ses deux photos téléchargées dans `frontend/assets/images/`.
+- Les nouvelles collections `Calendriers`, `Squishies`, `Boîtes mystère` et `Cadeaux` sont des axes de navigation. Une collection sans articles affiche explicitement son statut « bientôt ».
+- Aucun avis fictif, fausse remise, certification ou indication d’âge non vérifiée n’est affiché. Les achats restent désactivés.
+- L’ancienne architecture Shopify Liquid demeure inchangée. La branche `gh-pages` héberge une copie des fichiers de `frontend/` à sa racine.

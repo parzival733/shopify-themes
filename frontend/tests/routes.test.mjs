@@ -4,8 +4,13 @@ import {products} from '../assets/js/catalog.js';
 
 const ids=['2097149928320143360','2104746312091176960'];
 const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-assert.match(index,/app\.js\?v=gallery-4/);
+assert.match(index,/app\.js\?v=toy-glass-1/);
+assert.match(index,/toy-glass\.css\?v=1/);
 assert.doesNotMatch(index,/>TeemDrop<|Références TeemDrop/);
+assert.match(index,/SQUISHY CLUB/);
+assert.match(index,/Calendriers/);
+assert.ok(products.length===2,'Only verified or supplier-provided listings should remain');
+assert.ok(products.some(p=>p.collections?.includes('Calendriers')));
 for(const id of ids){
  const product=products.find(p=>p.supplierId===id);
  assert.ok(product,'Product present in storefront catalog: '+id);
@@ -35,7 +40,7 @@ for(const id of ids){
  for(const path of ['produit-','teemdrop-']){
   const content=readFileSync(new URL('../'+path+id+'.html',import.meta.url),'utf8');
   assert.match(content,new RegExp('data-teemdrop-id="'+id+'"'));
-  assert.match(content,/app\.js\?v=gallery-4/);
+  assert.match(content,/app\.js\?v=toy-glass-1/);
  }
 }
 const cases=[

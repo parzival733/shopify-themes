@@ -4,7 +4,9 @@ export const teemdropProducts = [
   {
     id:'2097149928320143360',
     name:'Calendrier de l’Avent Squishy Mystery Dumpling – 24 surprises',
-    label:'24 surprises squishy à découvrir avant Noël',
+    label:'24 squishies colorés à découvrir avant Noël',
+    category:'Calendriers',
+    collections:['Calendriers','Squishies','Boîtes mystère','Cadeaux'],
     supplierId:'2097149928320143360',
     supplierUrl:'https://seller.teemdrop.com/find-product/product-detail?id=2097149928320143360',
     price:29.90,
@@ -34,7 +36,9 @@ export const teemdropProducts = [
   },
   {
     id:'2104746312091176960',
-    name:'Nouveau produit 02',
+    name:'Nouvelle surprise à venir',
+    category:'À venir',
+    collections:[],
     supplierId:'2104746312091176960',
     supplierUrl:'https://seller.teemdrop.com/find-product/product-detail?id=2104746312091176960',
     price:null, image:null, variants:[], status:'Informations à compléter'
