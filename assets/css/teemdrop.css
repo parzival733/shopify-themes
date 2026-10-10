@@ -19,3 +19,7 @@
 .product-awaiting-data dd{margin:0;text-align:right;font-weight:780;color:#25503a;overflow-wrap:anywhere}
 @media(max-width:760px){.arrivals-section .product-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:none}.detail-main-photo--pending .product-media-pending{min-height:340px}}
 @media(max-width:430px){.product-media-pending{min-height:182px;padding:12px}.product-media-pending svg{width:40px;height:40px}.product-media-pending strong{font-size:9px}.product-media-pending small{font-size:9px}.product-awaiting-data{padding:17px}}
+
+/* Prices may be published while product imagery and toy-safety documentation are pending. */
+.price-tax-note{font-size:.72em;font-weight:650;color:#657567;letter-spacing:.01em;margin-left:4px}
+.product-awaiting-data strong{line-height:1.4}

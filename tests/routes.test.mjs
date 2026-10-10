@@ -9,7 +9,14 @@ assert.doesNotMatch(index,/>TeemDrop<|Références TeemDrop/);
 for(const id of ids){
  const product=products.find(p=>p.supplierId===id);
  assert.ok(product,'Product present in storefront catalog: '+id);
- assert.equal(product.price,null);
+ if(id===ids[0]){
+  assert.equal(product.price,29.90);
+  assert.match(product.name,/Calendrier de l’Avent Squishy Mystery Dumpling/);
+  assert.match(product.description,/24 décembre/);
+  assert.ok(product.shippingInfo.includes('inclus'));
+ }else{
+  assert.equal(product.price,null);
+ }
  assert.equal(product.image,null);
  for(const path of ['produit-','teemdrop-']){
   const content=readFileSync(new URL('../'+path+id+'.html',import.meta.url),'utf8');
@@ -42,8 +49,13 @@ for(const [i,scenario] of cases.entries()){
  assert.doesNotMatch(main.innerHTML,/Page introuvable\.|seller\.teemdrop\.com/,scenario.label);
  if(scenario.label.startsWith('Product detail')||scenario.label.startsWith('Legacy')){
   assert.match(main.innerHTML,/class="detail"/,scenario.label+' not standard product layout');
-  assert.match(main.innerHTML,/Prix à confirmer/,scenario.label+' invents a price');
-  assert.doesNotMatch(main.innerHTML,/data-add-detail=/,scenario.label+' enables unpriced item purchase');
+  if(scenario.sku===ids[0]){
+   assert.match(main.innerHTML,/<div class="detail-price">29,90[^<]*<span class="price-tax-note"> TTC<\/span><\/div>/,scenario.label+' must display the assigned TTC price in the product detail');
+   // Related products can still have an unpriced placeholder (the second supplier reference).
+  }else{
+   assert.match(main.innerHTML,/Prix à confirmer/,scenario.label+' invents a price');
+  }
+  assert.doesNotMatch(main.innerHTML,/data-add-detail=/,scenario.label+' enables unverified item purchase');
  }
  console.log('PASS',scenario.label);
 }
