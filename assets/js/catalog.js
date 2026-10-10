@@ -3,19 +3,22 @@
 const photo = (id, w=1100, crop='center') => 'https://images.unsplash.com/' + id + '?auto=format&fit=crop&w=' + w + '&q=82&crop=' + crop;
 
 export const photos = {
-  hero: photo('photo-1600210492486-724fe5c67fb0',1800),
-  home: photo('photo-1600607687920-4e2a09cf159d',1000),
+  hero: photo('photo-1543589077-47d81606c1bf',1800),
+  home: photo('photo-1482517967863-00e15c9b44be',1000),
   beauty: photo('photo-1608571423902-eed4a5ad8108',1000),
-  lifestyle: photo('photo-1483985988355-763728e1935b',1000),
-  story: photo('photo-1618221195710-dd6b41faaea6',1600),
-  journalA: photo('photo-1600210491892-03d54c0aaf87',950),
-  journalB: photo('photo-1600607688969-a5bfcd646154',950)
+  lifestyle: photo('photo-1512909006721-3d6018887383',1000),
+  story: photo('photo-1512389142860-9c449e58a543',1600),
+  journalA: photo('photo-1576919228236-a097c32a5cd4',950),
+  journalB: photo('photo-1512909006721-3d6018887383',950),
+  giftA: photo('photo-1512909006721-3d6018887383',900),
+  giftB: photo('photo-1482517967863-00e15c9b44be',900),
+  giftC: photo('photo-1576919228236-a097c32a5cd4',900)
 };
 
 export const categories = [
-  {id:'Maison', name:'Maison & décoration', subtitle:'Matières · Objets · Lumière', image:photos.home},
-  {id:'Beauté', name:'Beauté & soin', subtitle:'Rituels · Sensorialité', image:photos.beauty},
-  {id:'Lifestyle', name:'Lifestyle', subtitle:'Accessoires · Quotidien', image:photos.lifestyle}
+  {id:'Maison', name:'Maison & décoration', subtitle:'Décoration · Lumières · Maison', image:photos.home},
+  {id:'Beauté', name:'Beauté & soin', subtitle:'Douceur & moments pour soi', image:photos.beauty},
+  {id:'Lifestyle', name:'Lifestyle', subtitle:'Petites attentions · Cadeaux', image:photos.lifestyle}
 ];
 
 export const products = [
