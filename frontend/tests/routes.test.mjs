@@ -4,7 +4,7 @@ import {products} from '../assets/js/catalog.js';
 
 const ids=['2097149928320143360','2104746312091176960'];
 const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-assert.match(index,/app\.js\?v=product-page-3/);
+assert.match(index,/app\.js\?v=gallery-4/);
 assert.doesNotMatch(index,/>TeemDrop<|Références TeemDrop/);
 for(const id of ids){
  const product=products.find(p=>p.supplierId===id);
@@ -17,11 +17,25 @@ for(const id of ids){
  }else{
   assert.equal(product.price,null);
  }
- assert.equal(product.image,null);
+ if(id===ids[0]){
+   assert.equal(product.image,'./assets/images/mystery-dumpling-calendrier-coffret.webp');
+   assert.equal(product.gallery.length,2);
+   assert.equal(product.variantName,'Christmas blind box');
+   assert.match(product.materials,/PVC/);
+   assert.ok(product.specifications.some(spec=>spec.value.includes('26 × 18 × 3')));
+   for(const photo of product.gallery){
+     const bytes=readFileSync(new URL('../'+photo.src.replace('./',''),import.meta.url));
+     assert.equal(bytes.toString('ascii',0,4),'RIFF');
+     assert.equal(bytes.toString('ascii',8,12),'WEBP');
+     assert.ok(bytes.length>40000);
+   }
+ }else{
+   assert.equal(product.image,null);
+ }
  for(const path of ['produit-','teemdrop-']){
   const content=readFileSync(new URL('../'+path+id+'.html',import.meta.url),'utf8');
   assert.match(content,new RegExp('data-teemdrop-id="'+id+'"'));
-  assert.match(content,/app\.js\?v=product-page-3/);
+  assert.match(content,/app\.js\?v=gallery-4/);
  }
 }
 const cases=[
@@ -51,6 +65,9 @@ for(const [i,scenario] of cases.entries()){
   assert.match(main.innerHTML,/class="detail"/,scenario.label+' not standard product layout');
   if(scenario.sku===ids[0]){
    assert.match(main.innerHTML,/<div class="detail-price">29,90[^<]*<span class="price-tax-note"> TTC<\/span><\/div>/,scenario.label+' must display the assigned TTC price in the product detail');
+   assert.match(main.innerHTML,/data-gallery-main/,scenario.label+' should use the two supplied photos');
+   assert.match(main.innerHTML,/data-gallery-src=/,scenario.label+' should provide photo selection buttons');
+   assert.match(main.innerHTML,/26 × 18 × 3/,scenario.label+' should display confirmed dimensions');
    // Related products can still have an unpriced placeholder (the second supplier reference).
   }else{
    assert.match(main.innerHTML,/Prix à confirmer/,scenario.label+' invents a price');
