@@ -1,21 +1,14 @@
-# Deux références TeemDrop — intégration dans le front-end
+# TeemDrop — deux produits intégrés dans le catalogue interne
 
-Les URL fournies renvoient à des fiches de l'**espace vendeur TeemDrop**, nécessitant une authentification. Les informations de vente et les visuels ne sont pas accessibles publiquement.
+Les identifiants fournisseur `2097149928320143360` et `2104746312091176960` sont intégrés dans le catalogue principal (`frontend/assets/js/catalog.js`). Ils utilisent les **mêmes cartes et le même modèle de fiche produit** que les autres produits de la boutique.
 
-| Identifiant | Fiche |
-| --- | --- |
-| 2097149928320143360 | https://seller.teemdrop.com/find-product/product-detail?id=2097149928320143360 |
-| 2104746312091176960 | https://seller.teemdrop.com/find-product/product-detail?id=2104746312091176960 |
+## Pages clients
 
-## Ce qui est intégré
+- `/produit-2097149928320143360.html`
+- `/produit-2104746312091176960.html`
 
-- Exactes références et liens dans `frontend/assets/js/teemdrop.js`
-- Section du site `#fournisseurs`, fiches internes `?page=teemdrop&id=...`, recherche par identifiant
-- Placeholders explicitement déclarés ; aucun prix, photo, variante ou nom commercial inventé
-- Panier désactivé pour ces références : la vitrine reste non transactionnelle
+Les anciennes URL `/teemdrop-*.html` et `index.html?page=teemdrop&id=...` restent compatibles. Elles affichent désormais les fiches produit internes. Aucun lien vers l'interface TeemDrop n'apparaît dans la boutique.
 
-## Pour finaliser l'affichage commercial
+Les deux identifiants sont connus, mais les fiches du vendeur TeemDrop demandent une authentification. Il manque donc les **noms commerciaux réels, les photos, les variantes et les prix**. Aucun de ces champs n'a été inventé ; les articles concernés ne sont pas ajoutables au panier tant que ces données n'ont pas été vérifiées.
 
-Transmettre pour chaque fiche le titre, les photos produit autorisées à la réutilisation, le descriptif, le prix de vente, les variantes et les conditions de livraison ; exporter ces données depuis la session TeemDrop si possible.
-
-Une véritable vente ou une synchronisation de commandes TeemDrop exige un système de paiement, un backend et une intégration fournisseur ; ces fonctions ne sont pas réalisées par GitHub Pages.
+Pour finaliser ces fiches, transmettre un export fournisseur ou les captures intégrales montrant les noms, photos, variantes, prix et descriptifs. L'architecture Shopify Liquid historique reste préservée et la vitrine n'effectue aucun paiement.

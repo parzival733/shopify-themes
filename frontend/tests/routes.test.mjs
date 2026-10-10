@@ -1,67 +1,49 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import {readFileSync} from 'node:fs';
+import {products} from '../assets/js/catalog.js';
 
-const supplierIds = ['2097149928320143360','2104746312091176960'];
-const index = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-assert.match(index, /app\.js\?v=teemdrop-routing-2/);
-
-for (const id of supplierIds) {
-  const pageHtml = readFileSync(new URL('../teemdrop-' + id + '.html', import.meta.url),'utf8');
-  assert.match(pageHtml, new RegExp('data-teemdrop-id="' + id + '"'));
-  assert.match(pageHtml, /app\.js\?v=teemdrop-routing-2/);
+const ids=['2097149928320143360','2104746312091176960'];
+const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+assert.match(index,/app\.js\?v=product-page-3/);
+assert.doesNotMatch(index,/>TeemDrop<|Références TeemDrop/);
+for(const id of ids){
+ const product=products.find(p=>p.supplierId===id);
+ assert.ok(product,'Product present in storefront catalog: '+id);
+ assert.equal(product.price,null);
+ assert.equal(product.image,null);
+ for(const path of ['produit-','teemdrop-']){
+  const content=readFileSync(new URL('../'+path+id+'.html',import.meta.url),'utf8');
+  assert.match(content,new RegExp('data-teemdrop-id="'+id+'"'));
+  assert.match(content,/app\.js\?v=product-page-3/);
+ }
 }
-
-const cases = [
-  ...supplierIds.map(id => ({
-    label: 'legacy query '+id,
-    pathname: '/shopify-themes/index.html',
-    search: '?page=teemdrop&id='+id,
-    datasetId: '',
-    expectedId: id
-  })),
-  ...supplierIds.map(id => ({
-    label: 'static HTML '+id,
-    pathname: '/shopify-themes/teemdrop-'+id+'.html',
-    search: '',
-    datasetId: id,
-    expectedId: id
-  })),
-  {
-    label:'legacy product alias',
-    pathname:'/shopify-themes/index.html',
-    search:'?page=produit&id='+supplierIds[0],
-    datasetId:'',
-    expectedId:supplierIds[0]
-  },
-  {
-    label:'supplier list without id',
-    pathname:'/shopify-themes/index.html',
-    search:'?page=teemdrop',
-    datasetId:'',
-    expectedId:supplierIds[1]
-  },
-  {
-    label:'supplier reference search',
-    pathname:'/shopify-themes/index.html',
-    search:'?page=recherche&q='+supplierIds[1],
-    datasetId:'',
-    expectedId:supplierIds[1]
-  }
+const cases=[
+ ...ids.map(id=>({label:'Product detail '+id,pathname:'/shopify-themes/produit-'+id+'.html',search:'',sku:id})),
+ ...ids.map(id=>({label:'Legacy alias '+id,pathname:'/shopify-themes/teemdrop-'+id+'.html',search:'',sku:id})),
+ ...ids.map(id=>({label:'Old query '+id,pathname:'/shopify-themes/index.html',search:'?page=teemdrop&id='+id,sku:id})),
+ ...ids.map(id=>({label:'Normal product query '+id,pathname:'/shopify-themes/index.html',search:'?page=produit&id=teemdrop-'+id,sku:id})),
+ {label:'Collections',pathname:'/shopify-themes/index.html',search:'?page=collection',sku:ids[0]},
+ {label:'Homepage',pathname:'/shopify-themes/index.html',search:'',sku:ids[0]},
+ {label:'Search by supplier reference',pathname:'/shopify-themes/index.html',search:'?page=recherche&q='+ids[1],sku:ids[1]}
 ];
-
-for (const [i,scenario] of cases.entries()) {
-  const main = { innerHTML: '' };
-  globalThis.location = { pathname: scenario.pathname, search: scenario.search, hash: '' };
-  globalThis.localStorage = { getItem: () => null };
-  globalThis.document = {
-    body: { dataset: { teemdropId: scenario.datasetId } },
-    title: '',
-    querySelector(selector) { return selector === '#main' ? main : null; },
-    querySelectorAll() { return []; },
-    addEventListener() {}
-  };
-  await import(new URL('../assets/js/app.js?route-smoke='+i, import.meta.url).href);
-  assert.ok(main.innerHTML.includes(scenario.expectedId),scenario.label+' missing supplier ID');
-  assert.ok(!main.innerHTML.includes('Page introuvable.'),scenario.label+' rendered internal 404');
-  console.log('PASS',scenario.label);
+for(const [i,scenario] of cases.entries()){
+ const main={innerHTML:''};
+ globalThis.location={pathname:scenario.pathname,search:scenario.search,hash:''};
+ globalThis.localStorage={getItem:()=>null};
+ globalThis.document={
+  body:{dataset:{teemdropId:scenario.pathname.match(/(?:produit|teemdrop)-(\d{19})\.html$/)?.[1]||''}},
+  title:'',
+  querySelector:s=>s==='#main'?main:null,
+  querySelectorAll:()=>[],
+  addEventListener(){}
+ };
+ await import(new URL('../assets/js/app.js?test='+i,import.meta.url).href);
+ assert.ok(main.innerHTML.includes(scenario.sku),scenario.label+' missing item');
+ assert.doesNotMatch(main.innerHTML,/Page introuvable\.|seller\.teemdrop\.com/,scenario.label);
+ if(scenario.label.startsWith('Product detail')||scenario.label.startsWith('Legacy')){
+  assert.match(main.innerHTML,/class="detail"/,scenario.label+' not standard product layout');
+  assert.match(main.innerHTML,/Prix à confirmer/,scenario.label+' invents a price');
+  assert.doesNotMatch(main.innerHTML,/data-add-detail=/,scenario.label+' enables unpriced item purchase');
+ }
+ console.log('PASS',scenario.label);
 }
