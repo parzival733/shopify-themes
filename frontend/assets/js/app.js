@@ -36,10 +36,10 @@ function productCard(p){
   return '<article class="product-card" data-product-card data-category="'+escapeHTML(p.category)+'" data-name="'+escapeHTML(p.name)+'">'
     +'<div class="product-image"><a href="'+href+'" aria-label="Découvrir '+escapeHTML(p.name)+'">'+media+'</a>'
     +(p.tag?'<span class="product-badge">'+escapeHTML(p.tag)+'</span>':'')
-    +(Number.isFinite(p.price)?'<button class="quick-add" type="button" data-add="'+escapeHTML(p.id)+'" aria-label="Ajouter '+escapeHTML(p.name)+' au panier de démonstration">AJOUTER À MA SÉLECTION +</button>':'')
+    +(Number.isFinite(p.price)&&p.source!=='teemdrop'?'<button class="quick-add" type="button" data-add="'+escapeHTML(p.id)+'" aria-label="Ajouter '+escapeHTML(p.name)+' au panier de démonstration">AJOUTER À MA SÉLECTION +</button>':'')
     +'</div><div class="product-body"><h3><a href="'+href+'">'+escapeHTML(p.name)+'</a></h3>'
     +'<p class="product-sub">'+escapeHTML(p.label)+'</p>'
-    +'<div class="price">'+(Number.isFinite(p.price)?money(p.price):'<span class="price-pending">Prix à confirmer</span>')+'</div>'
+    +'<div class="price">'+(Number.isFinite(p.price)?money(p.price)+(p.source==='teemdrop'?'<span class="price-tax-note"> TTC</span>':''):'<span class="price-pending">Prix à confirmer</span>')+'</div>'
     +'</div></article>';
 }
 
@@ -57,7 +57,7 @@ function arrivalsSection(){
   const arrivals=products.filter(p=>p.source==='teemdrop');
   return '<section class="section arrivals-section" id="nouveautes"><div class="wrap">'
     +heading('DANS LA BOUTIQUE','Les nouveaux produits','<a class="tiny-link" href="'+link('collection',{cat:'Nouveautés'})+'">VOIR LES NOUVEAUTÉS ↗</a>')
-    +'<p class="arrivals-lead">Deux nouvelles fiches ont rejoint la sélection. Les photos et prix seront complétés dès réception des informations fournisseur vérifiées.</p>'
+    +'<p class="arrivals-lead">Découvrez notre calendrier de l’Avent Squishy Mystery Dumpling : 24 surprises à malaxer, au prix de 29,90 € TTC. Les visuels et informations de sécurité du fabricant restent à confirmer.</p>'
     +'<div class="product-grid">'+arrivals.map(productCard).join('')+'</div></div></section>';
 }
 
@@ -93,7 +93,8 @@ function productPage(){
   document.title=p.name+' — Atelier Universal';
   const related=products.filter(other=>other.id!==p.id&&other.category===p.category).slice(0,4);
   const more=related.length>=2?related:products.filter(other=>other.id!==p.id).slice(0,4);
-  const ready=Number.isFinite(p.price)&&Boolean(p.image);
+  const hasPrice=Number.isFinite(p.price);
+  const ready=hasPrice&&Boolean(p.image)&&p.source!=='teemdrop';
   const gallery=ready
     ?'<div class="detail-main-photo">'+image(p.image,'Photo d’illustration de '+p.name,'','fetchpriority="high" width="970" height="1120"')+'</div>'
       +'<div class="detail-thumb">'+image(photos.home,'Inspiration de matières et ambiances','','loading="lazy" width="530" height="380"')+'</div>'
@@ -105,21 +106,22 @@ function productPage(){
       +'</div><label for="detail-qty">Quantité</label><input class="detail-quantity" type="number" id="detail-qty" min="1" max="99" value="1">'
       +'<div><button class="dark-btn detail-cta" type="button" data-add-detail="'+escapeHTML(p.id)+'">AJOUTER À MA SÉLECTION '+iconArrow+'</button></div>'
       +'<p class="demo-note">Panier de démonstration uniquement. Aucun paiement réel.</p>'
-    :'<div class="product-awaiting-data"><strong>Fiche produit en préparation</strong>'
-      +'<p>Les photographies, caractéristiques, variantes et prix réels doivent être confirmés. Ce produit ne peut pas encore être ajouté au panier.</p>'
+    :'<div class="product-awaiting-data"><strong>Informations complémentaires à venir</strong>'
+      +'<p>'+(hasPrice?'Le prix de vente conseillé est indiqué. Les photographies et les renseignements de sécurité du fabricant restent à vérifier avant toute mise en vente.':'Les photographies, caractéristiques, variantes et prix doivent être confirmés. Ce produit ne peut pas encore être ajouté au panier.')+'</p>'
       +'<dl><div><dt>Référence produit</dt><dd>'+escapeHTML(p.supplierId||p.id)+'</dd></div>'
-      +'<div><dt>Prix</dt><dd>À confirmer</dd></div>'
+      +'<div><dt>Prix affiché</dt><dd>'+(hasPrice?money(p.price)+' TTC':'À confirmer')+'</dd></div>'
       +'<div><dt>Variantes</dt><dd>Non renseignées</dd></div></dl></div>';
   return crumb(p.category,p.name)
     +'<section class="section" style="padding-top:18px"><div class="wrap"><div class="detail">'
     +'<div class="detail-gallery">'+gallery+'</div>'
     +'<div class="detail-copy"><span class="overline">ATELIER UNIVERSAL &nbsp; — &nbsp; '+escapeHTML(p.category)+'</span>'
-    +'<h1>'+escapeHTML(p.name)+'</h1><div class="detail-price">'+(ready?money(p.price):'Prix à confirmer')+'</div>'
+    +'<h1>'+escapeHTML(p.name)+'</h1><div class="detail-price">'+(hasPrice?money(p.price)+(p.source==='teemdrop'?'<span class="price-tax-note"> TTC</span>':''):'Prix à confirmer')+'</div>'
     +'<p>'+escapeHTML(p.description)+'</p><hr>'
     +'<span class="pill">'+(ready?'PHOTOGRAPHIE D’ILLUSTRATION':'INFORMATIONS EN COURS DE VÉRIFICATION')+'</span>'
     +actions
     +'<details class="detail-meta"><summary>Description & caractéristiques</summary><p>'+escapeHTML(p.materials)+'</p></details>'
-    +'<details class="detail-meta"><summary>Livraison & retours</summary><p>Modalités à définir pour une boutique commerciale réelle. Aucun service de livraison n’est proposé ici.</p></details>'
+    +'<details class="detail-meta"><summary>Livraison & retours</summary><p>'+escapeHTML(p.shippingInfo||'Modalités à définir pour une boutique commerciale réelle. Aucun service de livraison n’est proposé ici.')+'</p></details>'
+    +(p.safetyNote?'<details class="detail-meta"><summary>Sécurité et conformité des jouets</summary><p>'+escapeHTML(p.safetyNote)+'</p></details>':'')
     +'</div></div></div></section>'
     +'<section class="section section-surface"><div class="wrap">'
     +heading('À DÉCOUVRIR','Dans le même esprit')
@@ -155,7 +157,7 @@ function render(){const pages={accueil:home,collection:collectionPage,produit:pr
 function saveCart(){try{localStorage.setItem('atelier-demo-cart',JSON.stringify(cart))}catch(_){/* storage disabled */}updateCartCount()}
 function updateCartCount(){$$('[data-cart-count]').forEach(el=>el.textContent=cart.reduce((n,i)=>n+i.qty,0))}
 function notify(message){const toast=$('#toast');toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2900)}
-function addToCart(id,qty=1,option=''){const p=productById(id);if(!p||!Number.isFinite(p.price))return;const key=id+'|'+option;const row=cart.find(i=>i.key===key);if(row)row.qty+=qty;else cart.push({key,id,qty,option});saveCart();renderDrawer();openCart();notify(p.name+' ajouté à votre sélection')}
+function addToCart(id,qty=1,option=''){const p=productById(id);if(!p||!Number.isFinite(p.price)||p.source==='teemdrop')return;const key=id+'|'+option;const row=cart.find(i=>i.key===key);if(row)row.qty+=qty;else cart.push({key,id,qty,option});saveCart();renderDrawer();openCart();notify(p.name+' ajouté à votre sélection')}
 function changeQuantity(key,delta){const i=cart.find(item=>item.key===key);if(!i)return;i.qty+=delta;cart=cart.filter(item=>item.qty>0);saveCart();renderDrawer();if(page==='panier')main.innerHTML=cartPage()}
 function renderDrawer(){const holder=$('#drawer-items');holder.replaceChildren();if(!cart.length){const p=document.createElement('p');p.className='empty-message';p.textContent='Votre panier de démonstration est vide.';holder.append(p)}else{cart.forEach(i=>{const p=productById(i.id);if(!p)return;const row=document.createElement('div');row.className='drawer-item';const pic=document.createElement('img');pic.src=p.image;pic.alt='Photo de '+p.name;pic.loading='lazy';const info=document.createElement('div');const title=document.createElement('h3');title.textContent=p.name;const option=document.createElement('small');option.textContent=(i.option||'Standard')+' · '+money(p.price);const controls=document.createElement('div');controls.className='qty-row';for(const [label,delta] of [['−',-1],['+',1]]){const b=document.createElement('button');b.type='button';b.dataset.cartChange=i.key;b.dataset.delta=delta;b.textContent=label;b.setAttribute('aria-label',(delta<0?'Diminuer':'Augmenter')+' la quantité de '+p.name);controls.append(b);if(delta<0){const count=document.createElement('span');count.textContent=i.qty;controls.append(count)}}const del=document.createElement('button');del.className='remove';del.type='button';del.dataset.cartRemove=i.key;del.textContent='Retirer';controls.append(del);info.append(title,option,controls);row.append(pic,info);holder.append(row)})}const total=cart.reduce((n,i)=>n+(productById(i.id)?.price||0)*i.qty,0);$('#drawer-total').textContent=money(total)}
 function openCart(){const drawer=$('#cart-drawer');previousFocus=document.activeElement;renderDrawer();$('[data-cart-overlay]').hidden=false;drawer.classList.add('open');drawer.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';$('[data-cart-close]',drawer)?.focus()}
