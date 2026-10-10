@@ -1,5 +1,4 @@
 import {products,categories,photos,articles,money,productById} from './catalog.js';
-import {teemdropProducts,teemdropById} from './teemdrop.js';
 
 const $ = (s, root=document) => root.querySelector(s);
 const $$ = (s, root=document) => [...root.querySelectorAll(s)];
@@ -9,10 +8,12 @@ const params = new URLSearchParams(location.search);
 // Product pages also have stable HTML URLs, which do not rely on query parameters.
 // Keep legacy ?page=teemdrop&id= links working for existing bookmarks.
 const rawPage = params.get('page') || 'accueil';
-const staticSupplierId = document.body?.dataset?.teemdropId || location.pathname.match(/teemdrop-(\d{19})\.html$/)?.[1] || '';
-const embeddedSupplierId = rawPage.match(/(?:^|[&?])id=(\d{19})(?:$|&)/)?.[1] || '';
-const requestedSupplierId = staticSupplierId || params.get('id') || embeddedSupplierId;
-const page = teemdropById(requestedSupplierId) ? 'teemdrop' : rawPage;
+// Legacy supplier URLs and clean product URLs all use the normal catalog page.
+const staticSupplierId = document.body?.dataset?.teemdropId || location.pathname.match(/(?:teemdrop|produit)-(\d{19})\.html$/)?.[1] || '';
+const incomingId = staticSupplierId || params.get('id') || '';
+const resolvedProduct = productById(incomingId) || products.find(p=>p.supplierId===incomingId);
+const currentProductId = resolvedProduct?.id || incomingId;
+const page = resolvedProduct && (staticSupplierId || rawPage === 'teemdrop') ? 'produit' : (rawPage === 'teemdrop' ? 'collection' : rawPage);
 const main = $('#main');
 let cart = [];
 try { const saved = JSON.parse(localStorage.getItem('atelier-demo-cart') || '[]'); cart = Array.isArray(saved) ? saved.filter(i => productById(i.id) && Number.isInteger(i.qty) && i.qty > 0) : []; } catch (_) { cart = []; }
@@ -24,14 +25,24 @@ const pageHero = (overline,title,description='') => '<header class="page-hero"><
 const heading = (eyebrow,title,right='') => '<div class="section-head"><div><span class="overline">'+escapeHTML(eyebrow)+'</span><h2 class="section-title">'+title+'</h2></div>'+right+'</div>';
 const crumb = (...pieces) => '<nav class="breadcrumbs wrap" aria-label="Fil d’Ariane"><a href="./index.html">Accueil</a> / '+pieces.map(p=>escapeHTML(p)).join(' / ')+'</nav>';
 
-function productCard(p){
-  const href=link('produit',{id:p.id});
-  return '<article class="product-card" data-product-card data-category="'+escapeHTML(p.category)+'" data-name="'+escapeHTML(p.name)+'">'
-    +'<div class="product-image"><a href="'+href+'" aria-label="Découvrir '+escapeHTML(p.name)+'">'+image(p.image,'Photo d’illustration de '+p.label,'','loading="lazy" decoding="async" width="700" height="820"')+'</a>'
-    +(p.tag?'<span class="product-badge">'+escapeHTML(p.tag)+'</span>':'')
-    +'<button class="quick-add" type="button" data-add="'+p.id+'" aria-label="Ajouter '+escapeHTML(p.name)+' au panier de démonstration">AJOUTER À MA SÉLECTION +</button></div>'
-    +'<div class="product-body"><h3><a href="'+href+'">'+escapeHTML(p.name)+'</a></h3><p class="product-sub">'+escapeHTML(p.label)+'</p><div class="price">'+money(p.price)+'</div></div></article>';
+function missingProductImage(p){
+  return '<div class="product-media-pending" role="img" aria-label="Photographie indisponible pour '+escapeHTML(p.name)+'">'
+    +'<svg viewBox="0 0 64 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="10" y="13" width="44" height="38" rx="6"/><circle cx="23" cy="25" r="4"/><path d="M13 45 26 33l10 9 6-6 9 9"/></svg>'
+    +'<strong>Photo à venir</strong><small>Visuel produit non communiqué</small></div>';
 }
+function productCard(p){
+  const href=p.supplierId ? './produit-'+encodeURIComponent(p.supplierId)+'.html' : link('produit',{id:p.id});
+  const media=p.image ? image(p.image,'Photo d’illustration de '+p.name,'','loading="lazy" decoding="async" width="700" height="820"') : missingProductImage(p);
+  return '<article class="product-card" data-product-card data-category="'+escapeHTML(p.category)+'" data-name="'+escapeHTML(p.name)+'">'
+    +'<div class="product-image"><a href="'+href+'" aria-label="Découvrir '+escapeHTML(p.name)+'">'+media+'</a>'
+    +(p.tag?'<span class="product-badge">'+escapeHTML(p.tag)+'</span>':'')
+    +(Number.isFinite(p.price)?'<button class="quick-add" type="button" data-add="'+escapeHTML(p.id)+'" aria-label="Ajouter '+escapeHTML(p.name)+' au panier de démonstration">AJOUTER À MA SÉLECTION +</button>':'')
+    +'</div><div class="product-body"><h3><a href="'+href+'">'+escapeHTML(p.name)+'</a></h3>'
+    +'<p class="product-sub">'+escapeHTML(p.label)+'</p>'
+    +'<div class="price">'+(Number.isFinite(p.price)?money(p.price):'<span class="price-pending">Prix à confirmer</span>')+'</div>'
+    +'</div></article>';
+}
+
 function categoryCard(c){
   return '<a class="category-card" href="'+link('collection',{cat:c.id})+'">'
     +image(c.image,'Ambiance photographique de la collection '+c.name,'','loading="lazy" decoding="async" width="780" height="860"')
@@ -42,48 +53,12 @@ function articleCard(a){
     +'<p class="journal-meta">'+a.category+' &nbsp; — &nbsp; '+a.date+'</p><h3 class="journal-title"><a href="'+link('article',{id:a.id})+'">'+escapeHTML(a.title)+'</a></h3><p class="journal-excerpt">'+escapeHTML(a.excerpt)+'</p><a class="tiny-link" href="'+link('article',{id:a.id})+'">Lire l’article ↗</a></article>';
 }
 
-function teemdropPreview(){
-  return '<div class="td-preview" role="img" aria-label="Aucune photo produit transmise">'
-    +'<svg aria-hidden="true" viewBox="0 0 64 64"><rect x="10" y="13" width="44" height="38" rx="6"/><circle cx="23" cy="25" r="4"/><path d="M13 45 26 33l10 9 6-6 9 9"/></svg>'
-    +'<strong>Visuel non disponible</strong><small>Photo fournisseur à ajouter</small></div>';
-}
-function teemdropCard(p){
-  const url='./teemdrop-'+encodeURIComponent(p.id)+'.html';
-  return '<article class="td-card"><a href="'+url+'" aria-label="Consulter la référence TeemDrop '+escapeHTML(p.supplierId)+'">'+teemdropPreview()+'</a>'
-    +'<div class="td-card__info"><span class="td-label">Référence fournisseur · TeemDrop</span>'
-    +'<h3><a href="'+url+'">'+escapeHTML(p.name)+'</a></h3>'
-    +'<span class="td-ref">ID '+escapeHTML(p.supplierId)+'</span>'
-    +'<span class="td-status">'+escapeHTML(p.status)+'</span>'
-    +'<p>Nom commercial, photos, prix et variantes à renseigner depuis la fiche vendeur.</p>'
-    +'<a class="td-link" href="'+url+'">Consulter la fiche ↗</a></div></article>';
-}
-function teemdropSection(){
-  return '<section class="section td-section" id="fournisseurs"><div class="wrap">'
-    +heading('RÉFÉRENCES TEEMDROP','Deux nouveaux produits à compléter')
-    +'<p class="td-intro">Ces références ont été ajoutées au catalogue. Les pages TeemDrop sont réservées aux vendeurs connectés : elles restent sans prix ni image produit tant que leurs informations ne sont pas confirmées.</p>'
-    +'<div class="td-grid">'+teemdropProducts.map(teemdropCard).join('')+'</div>'
-    +'</div></section>';
-}
-function teemdropPage(){
-  const p=teemdropById(requestedSupplierId);
-  if(!p){
-    document.title='Références TeemDrop — Atelier Universal';
-    return pageHero('RÉFÉRENCES TEEMDROP','Découvrez les références.','Choisissez l’une des deux fiches fournisseur disponibles.')+teemdropSection();
-  }
-  document.title=p.name+' — TeemDrop — Atelier Universal';
-  return crumb('Références TeemDrop',p.name)
-    +'<section class="section"><div class="wrap td-detail">'
-    +teemdropPreview()
-    +'<div class="td-detail__info"><span class="overline">RÉFÉRENCE TEEMDROP</span>'
-    +'<h1>'+escapeHTML(p.name)+'</h1><span class="td-status">'+escapeHTML(p.status)+'</span>'
-    +'<p>Cette référence est enregistrée sur le site. Son titre exact, ses images, son prix de vente, ses variantes et sa disponibilité ne peuvent pas être confirmés sans accès à la fiche vendeur TeemDrop.</p>'
-    +'<dl class="td-facts"><div><dt>Identifiant fournisseur</dt><dd>'+escapeHTML(p.supplierId)+'</dd></div>'
-    +'<div><dt>Prix</dt><dd>Non renseigné</dd></div>'
-    +'<div><dt>Photos et variantes</dt><dd>En attente des informations fournisseur</dd></div></dl>'
-    +'<div class="td-actions"><a class="dark-btn" href="./index.html#fournisseurs">RETOUR AUX RÉFÉRENCES ↗</a>'
-    +'<a class="td-link" href="'+escapeHTML(p.supplierUrl)+'" target="_blank" rel="noopener noreferrer">Voir la source TeemDrop ↗</a></div>'
-    +'<p class="td-note">La source TeemDrop demande une connexion vendeur. Aucun achat, réservation ni paiement n’est possible pour cette référence.</p>'
-    +'</div></div></section>';
+function arrivalsSection(){
+  const arrivals=products.filter(p=>p.source==='teemdrop');
+  return '<section class="section arrivals-section" id="nouveautes"><div class="wrap">'
+    +heading('DANS LA BOUTIQUE','Les nouveaux produits','<a class="tiny-link" href="'+link('collection',{cat:'Nouveautés'})+'">VOIR LES NOUVEAUTÉS ↗</a>')
+    +'<p class="arrivals-lead">Deux nouvelles fiches ont rejoint la sélection. Les photos et prix seront complétés dès réception des informations fournisseur vérifiées.</p>'
+    +'<div class="product-grid">'+arrivals.map(productCard).join('')+'</div></div></section>';
 }
 
 function home(){
@@ -96,7 +71,7 @@ function home(){
     +'<a class="gift-card" href="'+link('collection',{cat:'Maison'})+'"><div class="gift-card-media">'+image(photos.giftB,'Décoration de Noël et lumières chaleureuses','', 'loading="lazy" decoding="async" width="800" height="960"')+'</div><div class="gift-card-body"><span class="overline">02 · POUR LA MAISON</span><h3>La douceur des fêtes</h3><span class="gift-card-link">Découvrir l’univers ↗</span></div></a>'
     +'<a class="gift-card" href="'+link('collection',{cat:'Beauté'})+'"><div class="gift-card-media">'+image(photos.giftC,'Sapin et ornements de Noël','', 'loading="lazy" decoding="async" width="800" height="960"')+'</div><div class="gift-card-body"><span class="overline">03 · MOMENTS POUR SOI</span><h3>Des instants précieux</h3><span class="gift-card-link">Trouver une inspiration ↗</span></div></a>'
     +'</div></div></section>'
-    +teemdropSection()
+    +arrivalsSection()
     +'<section class="section section-surface" id="selection"><div class="wrap">'+heading('IDÉES SOUS LE SAPIN','La sélection des fêtes','<a class="tiny-link" href="'+link('collection')+'">VOIR TOUS LES ARTICLES ↗</a>')+'<div class="product-toolbar"><div class="filter-tabs" role="group" aria-label="Filtrer les produits"><button class="filter-button" type="button" aria-pressed="true" data-home-filter="Tous">Tout voir</button><button class="filter-button" type="button" aria-pressed="false" data-home-filter="Maison">Maison</button><button class="filter-button" type="button" aria-pressed="false" data-home-filter="Beauté">Beauté</button><button class="filter-button" type="button" aria-pressed="false" data-home-filter="Lifestyle">Lifestyle</button></div><span class="small-count" id="product-count">8 articles</span></div><div class="product-grid" id="home-products">'+products.map(productCard).join('')+'</div><p class="demo-note">Sélection fictive : photos d’illustration sous licence Unsplash, prix et articles de démonstration.</p></div></section>'
     +'<section class="story-split"><div class="story-photo">'+image(photos.story,'Ambiance de Noël chaleureuse','', 'loading="lazy" width="1150" height="820"')+'</div><div class="story-copy"><span class="overline">VOTRE HISTOIRE, VOTRE UNIVERS</span><h2>La magie dans<br><em>les détails.</em></h2><p>Les fêtes nous rappellent combien les petits gestes comptent. Des lumières chaleureuses, des matières douces et des attentions qui donnent envie de se retrouver.</p><a class="tiny-link" href="'+link('histoire')+'">DÉCOUVRIR NOTRE UNIVERS &nbsp; ↗</a></div></section>'
     +'<section class="section" id="journal"><div class="wrap">'+heading('ESPRIT DE NOËL','L’inspiration des fêtes','<a class="tiny-link" href="'+link('journal')+'">TOUS LES ARTICLES ↗</a>')+'<div class="journal-grid">'+articles.map(articleCard).join('')+'</div></div></section>'
@@ -113,15 +88,44 @@ function collectionPage(){
     +'<div class="collection-controls"><div class="filter-tabs">'+allowed.map(c=>'<a class="filter-button" '+(c===active?'aria-current="page"':'')+' href="'+link('collection', c==='Tous'?{}:{cat:c})+'">'+(c==='Tous'?'Tout voir':escapeHTML(c))+'</a>').join('')+'</div><label class="sort-control">Trier <select id="sort-products" aria-label="Trier les produits"><option value="recommended">Notre sélection</option><option value="price-asc">Prix croissant</option><option value="price-desc">Prix décroissant</option><option value="name">Nom A–Z</option></select></label></div><div class="product-grid" id="collection-products">'+products.filter(p=>active==='Tous'||p.category===active).map(productCard).join('')+'</div><p class="demo-note">Photos d’illustration et prix fictifs. Aucun achat possible.</p></div></section>'+teemdropSection();
 }
 function productPage(){
-  const p=productById(params.get('id'));
-  if(!p) return notFoundPage();
+  const p=productById(currentProductId);
+  if(!p)return notFoundPage();
   document.title=p.name+' — Atelier Universal';
-  const related=products.filter(other=>other.id!==p.id&&(other.category===p.category)).slice(0,4);
-  const more=related.length>=3?related:products.filter(other=>other.id!==p.id).slice(0,4);
-  return crumb(p.category,p.name)+'<section class="section" style="padding-top:18px"><div class="wrap"><div class="detail"><div class="detail-gallery"><div class="detail-main-photo">'+image(p.image,'Photo d’illustration de '+p.name,'', 'fetchpriority="high" width="970" height="1120"')+'</div><div class="detail-thumb">'+image(photos.home,'Inspiration de matières et ambiances','', 'loading="lazy" width="530" height="380"')+'</div><div class="detail-thumb">'+image(photos.story,'Inspiration intérieur naturel','', 'loading="lazy" width="530" height="380"')+'</div></div>'
-    +'<div class="detail-copy"><span class="overline">ATELIER UNIVERSAL &nbsp; — &nbsp; '+escapeHTML(p.category)+'</span><h1>'+escapeHTML(p.name)+'</h1><div class="detail-price">'+money(p.price)+'</div><p>'+escapeHTML(p.description)+'</p><hr><span class="pill">PHOTOGRAPHIE D’ILLUSTRATION</span><label>Finition / Format</label><div class="option-row" id="product-options">'+p.colors.map((c,i)=>'<button class="option-btn '+(i===0?'selected':'')+'" type="button" data-option="'+escapeHTML(c)+'" aria-pressed="'+(i===0)+'">'+escapeHTML(c)+'</button>').join('')+'</div><label for="detail-qty">Quantité</label><input class="detail-quantity" type="number" id="detail-qty" min="1" max="99" value="1"><div><button class="dark-btn detail-cta" type="button" data-add-detail="'+p.id+'">AJOUTER À MA SÉLECTION '+iconArrow+'</button></div><p class="demo-note">Panier de démonstration uniquement. Ce site ne collecte aucun paiement.</p><details class="detail-meta"><summary>Description & matières</summary><p>'+escapeHTML(p.materials)+'</p></details><details class="detail-meta"><summary>Livraison & retours</summary><p>Modalités à définir pour une boutique commerciale réelle. Aucun service de livraison n’est proposé sur cette maquette.</p></details></div></div></div></section>'
-    +'<section class="section section-surface"><div class="wrap">'+heading('À DÉCOUVRIR','Dans le même esprit')+'<div class="product-grid">'+more.map(productCard).join('')+'</div></div></section>';
+  const related=products.filter(other=>other.id!==p.id&&other.category===p.category).slice(0,4);
+  const more=related.length>=2?related:products.filter(other=>other.id!==p.id).slice(0,4);
+  const ready=Number.isFinite(p.price)&&Boolean(p.image);
+  const gallery=ready
+    ?'<div class="detail-main-photo">'+image(p.image,'Photo d’illustration de '+p.name,'','fetchpriority="high" width="970" height="1120"')+'</div>'
+      +'<div class="detail-thumb">'+image(photos.home,'Inspiration de matières et ambiances','','loading="lazy" width="530" height="380"')+'</div>'
+      +'<div class="detail-thumb">'+image(photos.story,'Inspiration intérieur naturel','','loading="lazy" width="530" height="380"')+'</div>'
+    :'<div class="detail-main-photo detail-main-photo--pending">'+missingProductImage(p)+'</div>';
+  const actions=ready
+    ?'<label>Finition / Format</label><div class="option-row" id="product-options">'
+      +p.colors.map((c,i)=>'<button class="option-btn '+(i===0?'selected':'')+'" type="button" data-option="'+escapeHTML(c)+'" aria-pressed="'+(i===0)+'">'+escapeHTML(c)+'</button>').join('')
+      +'</div><label for="detail-qty">Quantité</label><input class="detail-quantity" type="number" id="detail-qty" min="1" max="99" value="1">'
+      +'<div><button class="dark-btn detail-cta" type="button" data-add-detail="'+escapeHTML(p.id)+'">AJOUTER À MA SÉLECTION '+iconArrow+'</button></div>'
+      +'<p class="demo-note">Panier de démonstration uniquement. Aucun paiement réel.</p>'
+    :'<div class="product-awaiting-data"><strong>Fiche produit en préparation</strong>'
+      +'<p>Les photographies, caractéristiques, variantes et prix réels doivent être confirmés. Ce produit ne peut pas encore être ajouté au panier.</p>'
+      +'<dl><div><dt>Référence produit</dt><dd>'+escapeHTML(p.supplierId||p.id)+'</dd></div>'
+      +'<div><dt>Prix</dt><dd>À confirmer</dd></div>'
+      +'<div><dt>Variantes</dt><dd>Non renseignées</dd></div></dl></div>';
+  return crumb(p.category,p.name)
+    +'<section class="section" style="padding-top:18px"><div class="wrap"><div class="detail">'
+    +'<div class="detail-gallery">'+gallery+'</div>'
+    +'<div class="detail-copy"><span class="overline">ATELIER UNIVERSAL &nbsp; — &nbsp; '+escapeHTML(p.category)+'</span>'
+    +'<h1>'+escapeHTML(p.name)+'</h1><div class="detail-price">'+(ready?money(p.price):'Prix à confirmer')+'</div>'
+    +'<p>'+escapeHTML(p.description)+'</p><hr>'
+    +'<span class="pill">'+(ready?'PHOTOGRAPHIE D’ILLUSTRATION':'INFORMATIONS EN COURS DE VÉRIFICATION')+'</span>'
+    +actions
+    +'<details class="detail-meta"><summary>Description & caractéristiques</summary><p>'+escapeHTML(p.materials)+'</p></details>'
+    +'<details class="detail-meta"><summary>Livraison & retours</summary><p>Modalités à définir pour une boutique commerciale réelle. Aucun service de livraison n’est proposé ici.</p></details>'
+    +'</div></div></div></section>'
+    +'<section class="section section-surface"><div class="wrap">'
+    +heading('À DÉCOUVRIR','Dans le même esprit')
+    +'<div class="product-grid">'+more.map(productCard).join('')+'</div></div></section>';
 }
+
 function storyPage(){document.title='Notre univers — Atelier Universal';return pageHero('NOTRE PHILOSOPHIE','La magie des détails.','Un lieu où l’esthétique rencontre la simplicité.')+'<section class="section"><div class="wrap editorial-layout"><div>'+image(photos.story,'Détail d’un intérieur moderne aux teintes douces','', 'loading="lazy" width="850" height="960"')+'</div><div><span class="overline">UNE AUTRE IDÉE DE L’ESSENTIEL</span><h2>Des lignes simples.<br>Une émotion singulière.</h2><p>Atelier Universal est un concept de vitrine e-commerce premium. Pensé à l’origine pour un thème Shopify, son langage visuel existe désormais dans une version front-end indépendante.</p><p>Cette architecture associe navigation claire, collections modulables, fiches produits, journal, FAQ, contact et panier local. Les contenus peuvent être adaptés à de nombreuses marques et catégories.</p><a class="dark-btn" href="'+link('collection')+'">EXPLORER LA SÉLECTION '+iconArrow+'</a></div></div></section>'}
 function journalPage(){document.title='Le journal — Atelier Universal';return pageHero('ESPRIT DE NOËL','Journal des fêtes.','Des instants de douceur et des idées pour la vie de tous les jours.')+'<section class="section"><div class="wrap journal-grid">'+articles.map(articleCard).join('')+'</div></section>'}
 function articlePage(){const a=articles.find(item=>item.id===params.get('id'));if(!a)return notFoundPage();document.title=a.title+' — Atelier Universal';return crumb('Journal',a.title)+'<article class="article wrap"><div class="overline">'+a.category+' &nbsp;—&nbsp; '+a.date+'</div><h1>'+escapeHTML(a.title)+'</h1><p>'+escapeHTML(a.excerpt)+'</p>'+image(a.image,'Photographie éditoriale pour '+a.title,'', 'loading="lazy" width="1050" height="620"')+'<h2>Prendre le temps de regarder.</h2><p>Chaque matière raconte une histoire. Les couleurs naturelles, les reliefs discrets et les gestes simples invitent à composer un espace plus personnel, loin des effets de mode.</p><p>Ce journal est un exemple de contenu éditorial, à réécrire pour raconter l’histoire de votre propre marque.</p><a class="tiny-link" href="'+link('journal')+'">← RETOUR AU JOURNAL</a></article>'}
