@@ -1,4 +1,4 @@
-import {products,categories,photos,articles,money,productById} from './catalog.js?v=gallery-4';
+import {products,categories,photos,articles,money,productById} from './catalog.js?v=toy-glass-1';
 
 const $ = (s, root=document) => root.querySelector(s);
 const $$ = (s, root=document) => [...root.querySelectorAll(s)];
@@ -45,7 +45,8 @@ function productCard(p){
 
 function categoryCard(c){
   return '<a class="category-card" href="'+link('collection',{cat:c.id})+'">'
-    +image(c.image,'Ambiance photographique de la collection '+c.name,'','loading="lazy" decoding="async" width="780" height="860"')
+    +image(c.image,(c.illustration?'Visuel d’ambiance pour ':'Photo du produit illustrant ')+c.name,'','loading="lazy" decoding="async" width="780" height="860"')
+    +(c.illustration?'<span class="category-ambience">Ambiance illustrative</span>':'')
     +'<span class="category-caption"><span><strong>'+escapeHTML(c.name)+'</strong><small>'+escapeHTML(c.subtitle)+'</small></span><span class="category-arrow">↗</span></span></a>';
 }
 function articleCard(a){
@@ -56,36 +57,89 @@ function articleCard(a){
 function arrivalsSection(){
   const arrivals=products.filter(p=>p.source==='teemdrop');
   return '<section class="section arrivals-section" id="nouveautes"><div class="wrap">'
-    +heading('DANS LA BOUTIQUE','Les nouveaux produits','<a class="tiny-link" href="'+link('collection',{cat:'Nouveautés'})+'">VOIR LES NOUVEAUTÉS ↗</a>')
-    +'<p class="arrivals-lead">Découvrez notre calendrier de l’Avent Mystery Dumpling : 24 surprises squishy, deux photos produit et un prix de 29,90 € TTC. Le deuxième article sera présenté prochainement.</p>'
+    +heading('NOUVEAUTÉS À DÉCOUVRIR','La sélection du Squishy Club','<a class="tiny-link" href="'+link('collection',{cat:'Nouveautés'})+'">VOIR LES NOUVEAUTÉS ↗</a>')
+    +'<p class="arrivals-lead">Notre calendrier Mystery Dumpling ouvre le bal avec 24 surprises à découvrir. Un deuxième produit arrive bientôt : sa fiche est encore en préparation.</p>'
     +'<div class="product-grid">'+arrivals.map(productCard).join('')+'</div></div></section>';
 }
-
 function home(){
-  document.title='Atelier Universal — La magie de Noël';
-  return '<section class="hero" aria-labelledby="hero-title"><div class="hero-copy"><div class="eyebrow">✧ ÉDITION DE NOËL &nbsp; · &nbsp; 2026</div><h1 id="hero-title">Un Noël<br><em>à part.</em></h1><p class="hero-desc">Des lumières douces, des cadeaux choisis avec le cœur et ces instants précieux qu’on aime partager. Bienvenue dans un Noël à votre image.</p><a class="dark-btn" href="'+link('collection')+'">DÉCOUVRIR LES IDÉES CADEAUX '+iconArrow+'</a><a class="hero-secondary" href="#cadeaux">LA MAGIE DES FÊTES ↓</a></div><div class="hero-image">'+image(photos.hero,'Sapin de Noël illuminé aux ornements chaleureux','', 'fetchpriority="high" width="1200" height="1220"')+'<div class="hero-caption">NOËL 2026 · LUMIÈRES & ÉMOTIONS</div></div></section>'
-    +'<div class="benefit-strip"><div class="benefit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 8 4.5v10L12 21l-8-4.5v-10L12 2Zm0 9 8-4.5M12 11 4 6.5M12 11v10"/></svg> Un univers chaleureux et inspirant</div><div class="benefit"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="1"/><path d="M8 21h8M12 17v4"/></svg> Une expérience fluide sur tous les écrans</div><div class="benefit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21 3.7 12.8C-1 8.2 5 1.6 10 5.8L12 7.5l2-1.7C19 1.6 25 8.2 20.3 12.8L12 21Z"/></svg> Des attentions à imaginer</div></div>'
-    +'<section class="section" id="collections"><div class="wrap">'+heading('INSPIRATIONS DE FÊTES','Les univers de Noël','<a class="tiny-link" href="'+link('collection')+'">TOUTE LA SÉLECTION ↗</a>')+'<div class="category-grid">'+categories.map(categoryCard).join('')+'</div></div></section>'
-    +'<section class="gift-edit section" id="cadeaux"><div class="wrap"><div class="gift-edit-top"><span class="overline">✦ L’ART D’OFFRIR</span><h2>De belles attentions, <em>tout simplement.</em></h2><p>Inspirez-vous de ces univers pour préparer les fêtes. Tous les articles et les prix sont fictifs : cette édition reste une démonstration de design.</p></div><div class="gift-edit-grid">'
-    +'<a class="gift-card" href="'+link('collection',{cat:'Lifestyle'})+'"><div class="gift-card-media">'+image(photos.giftA,'Cadeaux de Noël emballés avec soin','', 'loading="lazy" decoding="async" width="800" height="960"')+'</div><div class="gift-card-body"><span class="overline">01 · PETITES ATTENTIONS</span><h3>Le plaisir d’offrir</h3><span class="gift-card-link">Explorer les idées ↗</span></div></a>'
-    +'<a class="gift-card" href="'+link('collection',{cat:'Maison'})+'"><div class="gift-card-media">'+image(photos.giftB,'Décoration de Noël et lumières chaleureuses','', 'loading="lazy" decoding="async" width="800" height="960"')+'</div><div class="gift-card-body"><span class="overline">02 · POUR LA MAISON</span><h3>La douceur des fêtes</h3><span class="gift-card-link">Découvrir l’univers ↗</span></div></a>'
-    +'<a class="gift-card" href="'+link('collection',{cat:'Beauté'})+'"><div class="gift-card-media">'+image(photos.giftC,'Sapin et ornements de Noël','', 'loading="lazy" decoding="async" width="800" height="960"')+'</div><div class="gift-card-body"><span class="overline">03 · MOMENTS POUR SOI</span><h3>Des instants précieux</h3><span class="gift-card-link">Trouver une inspiration ↗</span></div></a>'
+  document.title='Atelier Universal — Noël, squishies & surprises';
+  const gift=products.find(p=>p.supplierId==='2097149928320143360');
+  const giftUrl='./produit-2097149928320143360.html';
+  const filters=['Tous',...categories.map(c=>c.id)];
+  return '<section class="hero toy-hero" aria-labelledby="hero-title">'
+    +'<div class="hero-copy"><div class="eyebrow">✦ NOËL 2026 · LE SQUISHY CLUB</div>'
+    +'<h1 id="hero-title">Des petites surprises.<br><em>De grands sourires.</em></h1>'
+    +'<p class="hero-desc">Calendriers de l’Avent, squishies à collectionner et petits jouets sensoriels : bienvenue dans notre monde de Noël, tendre, coloré et plein de surprises.</p>'
+    +'<a class="dark-btn" href="'+giftUrl+'">DÉCOUVRIR LE CALENDRIER '+iconArrow+'</a>'
+    +'<a class="hero-secondary" href="#collections">EXPLORER LES UNIVERS ↓</a></div>'
+    +'<div class="hero-image"><span class="toy-glass-bubble toy-glass-bubble--one" aria-hidden="true">✦</span>'
+    +'<div class="toy-glass-product">'+image(gift?.image||photos.hero,'Calendrier de l’Avent Mystery Dumpling avec personnages squishy de Noël','',
+      'fetchpriority="high" loading="eager" decoding="async" width="900" height="900"')
+    +'<span class="toy-glass-tag">🎁 24 surprises · '+money(gift?.price??29.90)+' TTC</span></div>'
+    +'<span class="toy-glass-bubble toy-glass-bubble--two" aria-hidden="true">♥</span>'
+    +'<div class="hero-caption">LA MAGIE DES MINI SURPRISES ✨</div></div></section>'
+    +'<div class="benefit-strip" aria-label="L’univers du Squishy Club">'
+    +'<div class="benefit">✦ 24 surprises dans le calendrier de l’Avent</div>'
+    +'<div class="benefit">♡ Des personnages colorés à malaxer</div>'
+    +'<div class="benefit">✧ Des idées cadeaux pour les fêtes</div></div>'
+    +'<section class="section" id="collections"><div class="wrap">'
+    +heading('UN MONDE TOUT DOUX','Explore nos univers','<a class="tiny-link" href="'+link('collection')+'">TOUT LE CATALOGUE ↗</a>')
+    +'<div class="category-grid">'+categories.map(categoryCard).join('')+'</div></div></section>'
+    +'<section class="gift-edit section" id="cadeaux"><div class="wrap"><div class="gift-edit-top">'
+    +'<span class="overline">✦ LA MAGIE SE CACHE DANS LES DÉTAILS</span>'
+    +'<h2>Un petit cadeau.<br><em>Beaucoup de magie.</em></h2>'
+    +'<p>Un calendrier à ouvrir, des mini squishies à malaxer et le plaisir de découvrir chaque jour une surprise. Des inspirations de Noël pour les collectionneurs et ceux qui aiment leur faire plaisir.</p>'
+    +'</div><div class="gift-edit-grid">'
+    +'<a class="gift-card" href="'+giftUrl+'"><div class="gift-card-media">'
+    +image(photos.advent,'Coffret calendrier Mystery Dumpling de Noël','', 'loading="lazy" decoding="async" width="800" height="800"')
+    +'</div><div class="gift-card-body"><span class="overline">01 · CALENDRIER</span><h3>24 jours de surprises</h3><span class="gift-card-link">Découvrir le calendrier ↗</span></div></a>'
+    +'<a class="gift-card" href="'+link('collection',{cat:'Squishies'})+'"><div class="gift-card-media">'
+    +image(photos.toys,'Mini squishies colorés du calendrier Mystery Dumpling','', 'loading="lazy" decoding="async" width="800" height="800"')
+    +'</div><div class="gift-card-body"><span class="overline">02 · MINI JOUETS</span><h3>Craquer pour les squishies</h3><span class="gift-card-link">Explorer les squishies ↗</span></div></a>'
+    +'<a class="gift-card" href="'+link('collection',{cat:'Cadeaux'})+'"><div class="gift-card-media">'
+    +image(photos.giftA,'Paquets de Noël, visuel d’ambiance','', 'loading="lazy" decoding="async" width="800" height="800"')
+    +'</div><div class="gift-card-body"><span class="overline">03 · AMBIANCE ILLUSTRATIVE</span><h3>Les petites attentions</h3><span class="gift-card-link">Explorer les idées ↗</span></div></a>'
     +'</div></div></section>'
     +arrivalsSection()
-    +'<section class="section section-surface" id="selection"><div class="wrap">'+heading('IDÉES SOUS LE SAPIN','La sélection des fêtes','<a class="tiny-link" href="'+link('collection')+'">VOIR TOUS LES ARTICLES ↗</a>')+'<div class="product-toolbar"><div class="filter-tabs" role="group" aria-label="Filtrer les produits"><button class="filter-button" type="button" aria-pressed="true" data-home-filter="Tous">Tout voir</button><button class="filter-button" type="button" aria-pressed="false" data-home-filter="Nouveautés">Nouveautés</button><button class="filter-button" type="button" aria-pressed="false" data-home-filter="Maison">Maison</button><button class="filter-button" type="button" aria-pressed="false" data-home-filter="Beauté">Beauté</button><button class="filter-button" type="button" aria-pressed="false" data-home-filter="Lifestyle">Lifestyle</button></div><span class="small-count" id="product-count">'+products.length+' articles</span></div><div class="product-grid" id="home-products">'+products.map(productCard).join('')+'</div><p class="demo-note">Sélection fictive : photos d’illustration sous licence Unsplash, prix et articles de démonstration.</p></div></section>'
-    +'<section class="story-split"><div class="story-photo">'+image(photos.story,'Ambiance de Noël chaleureuse','', 'loading="lazy" width="1150" height="820"')+'</div><div class="story-copy"><span class="overline">VOTRE HISTOIRE, VOTRE UNIVERS</span><h2>La magie dans<br><em>les détails.</em></h2><p>Les fêtes nous rappellent combien les petits gestes comptent. Des lumières chaleureuses, des matières douces et des attentions qui donnent envie de se retrouver.</p><a class="tiny-link" href="'+link('histoire')+'">DÉCOUVRIR NOTRE UNIVERS &nbsp; ↗</a></div></section>'
-    +'<section class="section" id="journal"><div class="wrap">'+heading('ESPRIT DE NOËL','L’inspiration des fêtes','<a class="tiny-link" href="'+link('journal')+'">TOUS LES ARTICLES ↗</a>')+'<div class="journal-grid">'+articles.map(articleCard).join('')+'</div></div></section>'
-    +'<section class="newsletter-band"><span class="overline">RESTONS INSPIRÉS</span><h2 class="section-title">Les belles histoires se partagent.</h2><p>De nouvelles inspirations et une touche de magie à imaginer ensemble.</p><form class="newsletter-form" data-demo-newsletter><label class="sr-only" for="newsletter-email">Votre adresse e-mail</label><input id="newsletter-email" type="email" autocomplete="email" placeholder="Votre adresse e-mail" required><button type="submit">M’INSCRIRE ↗</button></form><p class="newsletter-status" data-newsletter-status>Formulaire de démonstration : aucune donnée n’est enregistrée.</p></section>';
+    +'<section class="section section-surface" id="selection"><div class="wrap">'
+    +heading('NOTRE PETIT UNIVERS','Les surprises à découvrir','<a class="tiny-link" href="'+link('collection')+'">TOUS LES ARTICLES ↗</a>')
+    +'<div class="product-toolbar"><div class="filter-tabs" role="group" aria-label="Filtrer les produits">'
+    +filters.map((c,i)=>'<button class="filter-button" type="button" aria-pressed="'+(i===0?'true':'false')+'" data-home-filter="'+escapeHTML(c)+'">'+(i===0?'Tout voir':escapeHTML(categories.find(k=>k.id===c)?.shortName||c))+'</button>').join('')
+    +'</div><span class="small-count" id="product-count">'+products.length+' articles</span></div>'
+    +'<div class="product-grid" id="home-products">'+products.map(productCard).join('')+'</div>'
+    +'<p class="demo-note">Le second article attend ses informations fournisseur. Site de démonstration : achats désactivés.</p></div></section>'
+    +'<section class="story-split"><div class="story-photo">'
+    +image(photos.toys,'Squishies colorés et calendrier Mystery Dumpling','', 'loading="lazy" decoding="async" width="1150" height="820"')
+    +'</div><div class="story-copy"><span class="overline">BIENVENUE AU SQUISHY CLUB</span>'
+    +'<h2>Tout doux.<br><em>Tout joyeux.</em></h2>'
+    +'<p>On aime les personnages rigolos, les couleurs bonbon et les surprises qui rendent l’attente de Noël encore plus amusante. Ici, la collection grandit au rythme des découvertes.</p>'
+    +'<a class="tiny-link" href="'+link('histoire')+'">DÉCOUVRIR NOTRE UNIVERS ↗</a></div></section>'
+    +'<section class="section" id="journal"><div class="wrap">'
+    +heading('LE COIN DES IDÉES','Inspiration & magie de Noël','<a class="tiny-link" href="'+link('journal')+'">VOIR LE JOURNAL ↗</a>')
+    +'<div class="journal-grid">'+articles.map(articleCard).join('')+'</div></div></section>'
+    +'<section class="newsletter-band"><span class="overline">LE COURRIER DES SURPRISES</span>'
+    +'<h2 class="section-title">Encore un peu<br>de magie ?</h2>'
+    +'<p>Des idées cadeaux et inspirations à découvrir prochainement pour préparer Noël.</p>'
+    +'<form class="newsletter-form" data-demo-newsletter><label class="sr-only" for="newsletter-email">Votre adresse e-mail</label>'
+    +'<input id="newsletter-email" type="email" autocomplete="email" placeholder="Adresse e-mail d’un adulte" required>'
+    +'<button type="submit">M’INSCRIRE ↗</button></form>'
+    +'<p class="newsletter-status" data-newsletter-status>Formulaire de démonstration : aucune adresse n’est enregistrée.</p></section>';
 }
 function collectionPage(){
   const cat=params.get('cat')||'Tous';
   const allowed=['Tous','Nouveautés',...categories.map(c=>c.id)];
   const active=allowed.includes(cat)?cat:'Tous';
-  const name=active==='Tous'?'Toutes les collections':active==='Nouveautés'?'Nouveautés':categories.find(c=>c.id===active)?.name;
+  const name=active==='Tous'?'Tous les jouets':active==='Nouveautés'?'Nos nouveautés':categories.find(c=>c.id===active)?.name;
+  const selected=products.filter(p=>active==='Tous'||(active==='Nouveautés'&&p.source==='teemdrop')||p.collections?.includes(active));
   document.title=name+' — Atelier Universal';
-  return pageHero('ÉDITION DE NOËL','Des idées à offrir.','Maison, bien-être et accessoires : des idées pour préparer les fêtes à votre image.')
-    +'<section class="section"><div class="wrap">'+heading('NOTRE CATALOGUE',escapeHTML(name))
-    +'<div class="collection-controls"><div class="filter-tabs">'+allowed.map(c=>'<a class="filter-button" '+(c===active?'aria-current="page"':'')+' href="'+link('collection', c==='Tous'?{}:{cat:c})+'">'+(c==='Tous'?'Tout voir':escapeHTML(c))+'</a>').join('')+'</div><label class="sort-control">Trier <select id="sort-products" aria-label="Trier les produits"><option value="recommended">Notre sélection</option><option value="price-asc">Prix croissant</option><option value="price-desc">Prix décroissant</option><option value="name">Nom A–Z</option></select></label></div><div class="product-grid" id="collection-products">'+products.filter(p=>active==='Tous'||p.category===active).map(productCard).join('')+'</div><p class="demo-note">Photos d’illustration et prix fictifs. Aucun achat possible.</p></div></section>';
+  return pageHero('LE SQUISHY CLUB','Les petites surprises.','Calendriers de l’Avent, mini squishies, boîtes mystère et idées cadeaux de Noël.')
+    +'<section class="section"><div class="wrap">'+heading('NOS JOUETS & INSPIRATIONS',escapeHTML(name))
+    +'<div class="collection-controls"><div class="filter-tabs" role="group" aria-label="Collections">'
+    +allowed.map(c=>'<a class="filter-button" '+(c===active?'aria-current="page"':'')+' href="'+link('collection',c==='Tous'?{}:{cat:c})+'">'+(c==='Tous'?'Tout voir':escapeHTML(categories.find(k=>k.id===c)?.shortName||c))+'</a>').join('')
+    +'</div><label class="sort-control">Trier <select id="sort-products" aria-label="Trier les produits"><option value="recommended">Notre sélection</option><option value="price-asc">Prix croissant</option><option value="price-desc">Prix décroissant</option><option value="name">Nom A–Z</option></select></label></div>'
+    +'<div class="product-grid" id="collection-products">'+selected.map(productCard).join('')+'</div>'
+    +(!selected.length?'<div class="empty-message"><h3>Encore un peu de patience ✨</h3><p>Cette collection arrive bientôt. Découvrez en attendant le calendrier Mystery Dumpling.</p><a class="dark-btn" href="./produit-2097149928320143360.html">VOIR LE CALENDRIER ↗</a></div>':'')
+    +'<p class="demo-note">Les photos du calendrier ont été fournies par le marchand. Les autres visuels d’ambiance ne présentent pas des références actuellement vendues. Aucun paiement disponible.</p></div></section>';
 }
 function productPage(){
   const p=productById(currentProductId);
@@ -119,7 +173,7 @@ function productPage(){
   return crumb(p.category,p.name)
     +'<section class="section" style="padding-top:18px"><div class="wrap"><div class="detail">'
     +'<div class="detail-gallery">'+gallery+'</div>'
-    +'<div class="detail-copy"><span class="overline">ATELIER UNIVERSAL &nbsp; — &nbsp; '+escapeHTML(p.category)+'</span>'
+    +'<div class="detail-copy"><span class="overline">SQUISHY CLUB &nbsp; — &nbsp; '+escapeHTML(p.category)+'</span>'
     +'<h1>'+escapeHTML(p.name)+'</h1><div class="detail-price">'+(hasPrice?money(p.price)+(p.source==='teemdrop'?'<span class="price-tax-note"> TTC</span>':''):'Prix à confirmer')+'</div>'
     +'<p>'+escapeHTML(p.description)+'</p><hr>'
     +'<span class="pill">'+(ready?'PHOTOGRAPHIE D’ILLUSTRATION':p.image?'PHOTOS PRODUIT · VENTE NON ACTIVÉE':'INFORMATIONS EN COURS DE VÉRIFICATION')+'</span>'
@@ -134,10 +188,29 @@ function productPage(){
     +'<div class="product-grid">'+more.map(productCard).join('')+'</div></div></section>';
 }
 
-function storyPage(){document.title='Notre univers — Atelier Universal';return pageHero('NOTRE PHILOSOPHIE','La magie des détails.','Un lieu où l’esthétique rencontre la simplicité.')+'<section class="section"><div class="wrap editorial-layout"><div>'+image(photos.story,'Détail d’un intérieur moderne aux teintes douces','', 'loading="lazy" width="850" height="960"')+'</div><div><span class="overline">UNE AUTRE IDÉE DE L’ESSENTIEL</span><h2>Des lignes simples.<br>Une émotion singulière.</h2><p>Atelier Universal est un concept de vitrine e-commerce premium. Pensé à l’origine pour un thème Shopify, son langage visuel existe désormais dans une version front-end indépendante.</p><p>Cette architecture associe navigation claire, collections modulables, fiches produits, journal, FAQ, contact et panier local. Les contenus peuvent être adaptés à de nombreuses marques et catégories.</p><a class="dark-btn" href="'+link('collection')+'">EXPLORER LA SÉLECTION '+iconArrow+'</a></div></div></section>'}
-function journalPage(){document.title='Le journal — Atelier Universal';return pageHero('ESPRIT DE NOËL','Journal des fêtes.','Des instants de douceur et des idées pour la vie de tous les jours.')+'<section class="section"><div class="wrap journal-grid">'+articles.map(articleCard).join('')+'</div></section>'}
-function articlePage(){const a=articles.find(item=>item.id===params.get('id'));if(!a)return notFoundPage();document.title=a.title+' — Atelier Universal';return crumb('Journal',a.title)+'<article class="article wrap"><div class="overline">'+a.category+' &nbsp;—&nbsp; '+a.date+'</div><h1>'+escapeHTML(a.title)+'</h1><p>'+escapeHTML(a.excerpt)+'</p>'+image(a.image,'Photographie éditoriale pour '+a.title,'', 'loading="lazy" width="1050" height="620"')+'<h2>Prendre le temps de regarder.</h2><p>Chaque matière raconte une histoire. Les couleurs naturelles, les reliefs discrets et les gestes simples invitent à composer un espace plus personnel, loin des effets de mode.</p><p>Ce journal est un exemple de contenu éditorial, à réécrire pour raconter l’histoire de votre propre marque.</p><a class="tiny-link" href="'+link('journal')+'">← RETOUR AU JOURNAL</a></article>'}
-function faqPage(){document.title='FAQ — Atelier Universal';const faq=[['Puis-je acheter des produits sur ce site ?', 'Non. Atelier Universal est une démonstration front-end. Le panier fonctionne localement pour illustrer un parcours, mais aucun paiement, commande ou expédition n’est proposé.'],['Les photographies correspondent-elles aux produits ?', 'Non. Les photos sont des images éditoriales d’illustration, diffusées selon la licence gratuite Unsplash. Les noms et les prix sont fictifs.'],['Comment le site est-il hébergé ?', 'Il s’agit de fichiers HTML, CSS et JavaScript statiques pouvant être publiés sur GitHub Pages sans serveur Shopify.'],['Mes données personnelles sont-elles utilisées ?', 'Le panier de démonstration est enregistré uniquement dans le stockage local du navigateur. Les formulaires de contact et newsletter ne transmettent aucune donnée.'],['Puis-je personnaliser les collections ?', 'Oui. Les contenus des collections et produits se trouvent dans le fichier de données du front-end, et le design dans la feuille de styles.']];return pageHero('ON VOUS RÉPOND','Questions fréquentes.','Tout savoir sur cette expérience de démonstration.')+'<section class="section"><div class="wrap faq-list">'+faq.map((item,i)=>'<details '+(i===0?'open':'')+'><summary>'+escapeHTML(item[0])+'</summary><p>'+escapeHTML(item[1])+'</p></details>').join('')+'</div></section>'}
+function storyPage(){
+  document.title='Notre univers squishy — Atelier Universal';
+  return pageHero('NOTRE PETIT MONDE','Bienvenue au Squishy Club.','Des personnages rigolos, des couleurs joyeuses et la magie des surprises de Noël.')
+    +'<section class="section"><div class="wrap editorial-layout"><div>'
+    +image(photos.toys,'Les personnages squishy du calendrier Mystery Dumpling','', 'loading="lazy" width="850" height="960"')
+    +'</div><div><span class="overline">DES SURPRISES QUI FONT SOURIRE</span>'
+    +'<h2>Le plaisir de découvrir,<br>jour après jour.</h2>'
+    +'<p>Notre univers est consacré aux objets ludiques de Noël : calendriers de l’Avent, squishies aux formes amusantes, boîtes mystère et mini cadeaux à collectionner.</p>'
+    +'<p>Le calendrier Mystery Dumpling comprend 24 surprises. D’autres références pourront rejoindre la boutique après vérification de leurs caractéristiques et informations de sécurité.</p>'
+    +'<p class="demo-note">Site vitrine en construction. Les jouets ne sont pas encore proposés à la vente ; l’âge conseillé par le fabricant reste à confirmer.</p>'
+    +'<a class="dark-btn" href="'+link('collection')+'">DÉCOUVRIR LES JOUETS ↗</a></div></div></section>';
+}
+function journalPage(){document.title='Le journal Squishy Club — Atelier Universal';return pageHero('INSPIRATIONS POUR LES FÊTES','Le journal du Squishy Club.','Des idées pour offrir et patienter jusqu’à Noël.')+'<section class="section"><div class="wrap journal-grid">'+articles.map(articleCard).join('')+'</div></section>'}
+function articlePage(){const a=articles.find(item=>item.id===params.get('id'));if(!a)return notFoundPage();document.title=a.title+' — Atelier Universal';return crumb('Journal',a.title)+'<article class="article wrap"><div class="overline">'+escapeHTML(a.category)+' &nbsp;—&nbsp; '+escapeHTML(a.date)+'</div><h1>'+escapeHTML(a.title)+'</h1><p>'+escapeHTML(a.excerpt)+'</p>'+image(a.image,'Illustration pour '+a.title,'', 'loading="lazy" width="1050" height="620"')+'<h2>Un peu de magie pour les fêtes.</h2><p>Découvrir un personnage différent, imaginer son histoire et partager le plaisir de la surprise : voilà l’esprit de notre univers de Noël.</p><p>Pour les jouets, consultez toujours les recommandations d’âge et les informations de sécurité du fabricant avant l’achat.</p><a class="tiny-link" href="'+link('journal')+'">← RETOUR AUX INSPIRATIONS</a></article>'}
+function faqPage(){document.title='Questions fréquentes — Atelier Universal';const faq=[
+ ['Peut-on acheter ces squishies maintenant ?','Pas encore. La boutique est une vitrine statique : aucun paiement, commande ni expédition n’est possible.'],
+ ['Que contient le calendrier Mystery Dumpling ?','Un calendrier de l’Avent et 24 accessoires squishy assortis. La variante présentée est « Christmas blind box ».'],
+ ['Pour quel âge sont adaptés ces jouets ?','L’âge recommandé par le fabricant et la conformité réglementaire doivent encore être vérifiés. Il ne faut pas considérer ces petits jouets comme adaptés aux moins de trois ans sans confirmation.'],
+ ['Les photos correspondent-elles aux produits ?','Oui pour les deux photos du calendrier Mystery Dumpling, fournies par le marchand. Les photos d’ambiance des autres rubriques ne représentent pas d’autres produits mis en vente.'],
+ ['Combien coûte le calendrier ?','Le prix affiché est de 29,90 € TTC. Les conditions de livraison seront précisées avant l’ouverture des ventes.'],
+ ['Mes données sont-elles enregistrées ?','Le panier de démonstration est local. Les formulaires contact et newsletter ne transmettent ni ne stockent de données.']
+ ];return pageHero('ON VOUS RÉPOND','Toutes les réponses.','Les informations utiles sur les jouets, la sécurité et la boutique.')+'<section class="section"><div class="wrap faq-list">'+faq.map((item,i)=>'<details '+(i===0?'open':'')+'><summary>'+escapeHTML(item[0])+'</summary><p>'+escapeHTML(item[1])+'</p></details>').join('')+'</div></section>'}
+
 function contactPage(){document.title='Contact — Atelier Universal';return pageHero('PRENONS CONTACT','Écrivez-nous.','Une page de contact prête à être reliée à votre infrastructure.')+'<section class="section"><div class="wrap contact-box"><div><span class="overline">RESTONS EN CONTACT</span><h2>Une idée ?<br>Parlons-en.</h2><p>Ce formulaire est uniquement une présentation de l’interface. Pour recevoir de vrais messages, connectez-le à un service d’envoi ou à une adresse métier.</p><p class="legal-note">Mode vitrine : aucun message ne sera envoyé ou stocké.</p></div><form id="contact-demo"><div class="field"><label for="contact-name">Votre nom</label><input id="contact-name" name="name" autocomplete="name" required></div><div class="field"><label for="contact-email">Votre e-mail</label><input id="contact-email" type="email" name="email" autocomplete="email" required></div><div class="field"><label for="contact-message">Votre message</label><textarea id="contact-message" name="message" rows="6" required></textarea></div><button class="dark-btn" type="submit">VÉRIFIER LE FORMULAIRE '+iconArrow+'</button><p class="demo-note" id="contact-status" role="status">Aucune donnée ne sera transmise.</p></form></div></section>'}
 function legalPage(){document.title='Informations légales — Atelier Universal';return pageHero('INFORMATIONS','Mentions & politiques.','Cette vitrine ne constitue pas une boutique commerciale.')+'<section class="section"><div class="wrap" style="max-width:840px"><p class="legal-note">Contenus indicatifs uniquement. Les mentions légales, CGV, informations d’entreprise, livraison, retours et politique de confidentialité doivent être adaptés par l’éditeur réel du site avant un usage commercial.</p><h2 class="serif">Nature de la démonstration</h2><p>Atelier Universal est un prototype d’interface statique. Aucun paiement n’est accepté, aucune commande réelle n’est enregistrée et les produits présentés ne sont pas à vendre.</p><h2 class="serif">Stockage local</h2><p>Le navigateur conserve uniquement la sélection de panier de démonstration sur votre appareil. Aucune publicité ou mesure d’audience n’est installée par ce code.</p><h2 class="serif">Images</h2><p>Photographies d’illustration sous licence Unsplash. Consulter la page <a class="tiny-link" href="'+link('credits')+'">Crédits photos ↗</a>.</p></div></section>'}
 function creditsPage(){document.title='Crédits photographiques — Atelier Universal';const ids=[['Sapin de Noël illuminé','photo-1543589077-47d81606c1bf'],['Décoration festive','photo-1482517967863-00e15c9b44be'],['Paquets de Noël','photo-1512909006721-3d6018887383'],['Ambiance des fêtes','photo-1512389142860-9c449e58a543'],['Ornements et sapin','photo-1576919228236-a097c32a5cd4'],['Intérieur — photo originale','photo-1600210492486-724fe5c67fb0'],['Décoration intérieure','photo-1600607687920-4e2a09cf159d'],['Beauté — flacon','photo-1608571423902-eed4a5ad8108'],['Lifestyle — mode','photo-1483985988355-763728e1935b'],['Salon — ambiance éditoriale','photo-1618221195710-dd6b41faaea6'],['Vase et céramique','photo-1578749556568-bc2c40e68b61'],['Luminaires','photo-1507473885765-e6ed057f782c'],['Sac et accessoires','photo-1590874103328-eac38a683ce7'],['Fauteuil — intérieur','photo-1600566753190-17f0baa2a6c3'],['Cosmétiques','photo-1556228720-195a672e8a03'],['Carnet — papeterie','photo-1531346878377-a5be20888e57'],['Bougie','photo-1603006905003-be475563bc59'],['Photographie — journal I','photo-1600210491892-03d54c0aaf87'],['Photographie — journal II','photo-1600607688969-a5bfcd646154']];return pageHero('NOS SOURCES','Crédits photographiques.','Photographies sous licence gratuite Unsplash ; attribution proposée par respect pour les créateurs.')+'<section class="section"><div class="wrap"><p>Licence : <a class="tiny-link" href="https://unsplash.com/license" target="_blank" rel="noopener noreferrer">UNSPLASH LICENSE ↗</a>. Aucun visuel n’est présenté comme une photo d’un article réellement commercialisé.</p><ul class="credit-list">'+ids.map(i=>'<li>'+escapeHTML(i[0])+'<br><a href="https://unsplash.com/" target="_blank" rel="noopener noreferrer">Source : Unsplash · '+escapeHTML(i[1])+' ↗</a></li>').join('')+'</ul></div></section>'}
@@ -145,7 +218,7 @@ function searchPage(){
   const term=(params.get('q')||'').trim();
   const hits=term?products.filter(p=>(p.name+' '+p.category+' '+p.label+' '+p.description+' '+(p.supplierId||'')).toLocaleLowerCase('fr').includes(term.toLocaleLowerCase('fr'))):products;
   document.title='Recherche — Atelier Universal';
-  return pageHero('L’ATELIER DES FÊTES','Votre recherche.','Explorer les produits de cette boutique.')
+  return pageHero('LE SQUISHY CLUB','Votre recherche.','Retrouvez nos calendriers, squishies et petites surprises.')
     +'<section class="section"><div class="wrap"><form class="search-form" action="./index.html" method="get">'
     +'<input type="hidden" name="page" value="recherche"><label class="sr-only" for="results-search">Rechercher</label>'
     +'<input id="results-search" type="search" name="q" value="'+escapeHTML(term)+'" placeholder="Produit, référence, catégorie">'
@@ -168,7 +241,7 @@ function changeQuantity(key,delta){const i=cart.find(item=>item.key===key);if(!i
 function renderDrawer(){const holder=$('#drawer-items');holder.replaceChildren();if(!cart.length){const p=document.createElement('p');p.className='empty-message';p.textContent='Votre panier de démonstration est vide.';holder.append(p)}else{cart.forEach(i=>{const p=productById(i.id);if(!p)return;const row=document.createElement('div');row.className='drawer-item';const pic=document.createElement('img');pic.src=p.image;pic.alt='Photo de '+p.name;pic.loading='lazy';const info=document.createElement('div');const title=document.createElement('h3');title.textContent=p.name;const option=document.createElement('small');option.textContent=(i.option||'Standard')+' · '+money(p.price);const controls=document.createElement('div');controls.className='qty-row';for(const [label,delta] of [['−',-1],['+',1]]){const b=document.createElement('button');b.type='button';b.dataset.cartChange=i.key;b.dataset.delta=delta;b.textContent=label;b.setAttribute('aria-label',(delta<0?'Diminuer':'Augmenter')+' la quantité de '+p.name);controls.append(b);if(delta<0){const count=document.createElement('span');count.textContent=i.qty;controls.append(count)}}const del=document.createElement('button');del.className='remove';del.type='button';del.dataset.cartRemove=i.key;del.textContent='Retirer';controls.append(del);info.append(title,option,controls);row.append(pic,info);holder.append(row)})}const total=cart.reduce((n,i)=>n+(productById(i.id)?.price||0)*i.qty,0);$('#drawer-total').textContent=money(total)}
 function openCart(){const drawer=$('#cart-drawer');previousFocus=document.activeElement;renderDrawer();$('[data-cart-overlay]').hidden=false;drawer.classList.add('open');drawer.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';$('[data-cart-close]',drawer)?.focus()}
 function closeCart(){const drawer=$('#cart-drawer');drawer.classList.remove('open');drawer.setAttribute('aria-hidden','true');$('[data-cart-overlay]').hidden=true;document.body.style.overflow='';previousFocus?.focus()}
-function filterHome(category){$$('[data-home-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.homeFilter===category)));let n=0;$$('[data-product-card]',$('#home-products')).forEach(el=>{const show=category==='Tous'||el.dataset.category===category;el.hidden=!show;if(show)n++});$('#product-count').textContent=n+' article'+(n>1?'s':'')}
+function filterHome(category){$('[data-home-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.homeFilter===category)));let n=0;$('[data-product-card]',$('#home-products')).forEach(el=>{const p=products.find(p=>p.name===el.dataset.name);const show=category==='Tous'||Boolean(p?.collections?.includes(category));el.hidden=!show;if(show)n++});$('#product-count').textContent=n+' article'+(n>1?'s':'')}
 function sortCollection(sort){const grid=$('#collection-products');if(!grid)return;let ids=$$('[data-product-card]',grid).map(el=>({el,p:products.find(p=>p.name===el.dataset.name)}));ids.sort((a,b)=>{if(sort==='name')return a.p.name.localeCompare(b.p.name);if(sort==='price-asc'||sort==='price-desc'){const unknownA=!Number.isFinite(a.p.price),unknownB=!Number.isFinite(b.p.price);if(unknownA!==unknownB)return unknownA?1:-1;return sort==='price-asc'?a.p.price-b.p.price:b.p.price-a.p.price;}return products.indexOf(a.p)-products.indexOf(b.p)});ids.forEach(v=>grid.append(v.el))}
 
 document.addEventListener('click',e=>{
