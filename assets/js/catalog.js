@@ -1,3 +1,4 @@
+import {teemdropProducts} from './teemdrop.js';
 // All images below are sample editorial photos from Unsplash (https://unsplash.com/license).
 // Product descriptions, names, prices, labels and stock are fictitious for demonstration only.
 const photo = (id, w=1100, crop='center') => 'https://images.unsplash.com/' + id + '?auto=format&fit=crop&w=' + w + '&q=82&crop=' + crop;
@@ -21,7 +22,7 @@ export const categories = [
   {id:'Lifestyle', name:'Lifestyle', subtitle:'Petites attentions · Cadeaux', image:photos.lifestyle}
 ];
 
-export const products = [
+const demoProducts = [
   {id:'alba',name:'Vase Alba',label:'Céramique sculpturale',category:'Maison',price:38,image:photo('photo-1578749556568-bc2c40e68b61',950),description:'Une silhouette organique et une texture délicate, imaginées pour apporter une présence singulière à votre intérieur.',materials:'Céramique · finition naturelle',colors:['Sable','Craie'],tag:'NOUVEAU'},
   {id:'sora',name:'Lampe Sora',label:'Lumière & ambiance',category:'Maison',price:129,image:photo('photo-1507473885765-e6ed057f782c',950),description:'Une lumière douce et une ligne essentielle qui accompagne tous les moments de la journée.',materials:'Matières naturelles · finition mate',colors:['Naturel','Noir'],tag:''},
   {id:'serum',name:'Sérum Botanique',label:'Rituel visage',category:'Beauté',price:42,image:photo('photo-1608571423902-eed4a5ad8108',950),description:'L’élégance d’un rituel minimaliste. Composition et allégations à définir avec la marque finale.',materials:'Flacon en verre ambré',colors:['30 ml','50 ml'],tag:'ESSENTIEL'},
@@ -30,6 +31,26 @@ export const products = [
   {id:'pure',name:'Soin Pure',label:'Beauté essentielle',category:'Beauté',price:34,image:photo('photo-1556228720-195a672e8a03',950),description:'Un geste simple, un rituel apaisant. Contenu produit à personnaliser avant toute mise en vente.',materials:'Soin illustratif · cosmétique',colors:['100 ml','200 ml'],tag:''},
   {id:'atelier',name:'Carnet Atelier',label:'Papeterie créative',category:'Lifestyle',price:24,image:photo('photo-1531346878377-a5be20888e57',950),description:'Pour noter les inspirations et laisser de la place aux idées du quotidien.',materials:'Papeterie · inspiration',colors:['Ivoire','Sauge'],tag:''},
   {id:'cedre',name:'Bougie Cèdre',label:'Parfum d’intérieur',category:'Maison',price:31,image:photo('photo-1603006905003-be475563bc59',950),description:'Un rituel pour ralentir et prendre le temps. Senteur donnée à titre d’exemple.',materials:'Accessoire déco · senteur fictive',colors:['Sable','Ambre'],tag:'NOUVEAU'}
+];
+
+// Seller references become normal products in the storefront catalog.
+// Missing supplier metadata is left genuinely blank.
+export const products = [
+  ...teemdropProducts.map(item=>({
+    id:'teemdrop-'+item.id,
+    name:item.name,
+    label:'Fiche en préparation',
+    category:'Nouveautés',
+    price:null,
+    image:null,
+    description:'Informations sur ce produit en attente. Son nom commercial, ses photos, ses caractéristiques et son prix doivent encore être vérifiés.',
+    materials:'Caractéristiques à renseigner',
+    colors:[],
+    tag:'NOUVEAUTÉ',
+    supplierId:item.id,
+    source:'teemdrop'
+  })),
+  ...demoProducts
 ];
 
 export const articles = [
