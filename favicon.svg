@@ -1,1 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Atelier Universal édition de Noël"><defs><linearGradient id="fir" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#20533c"/><stop offset="1" stop-color="#0c2b24"/></linearGradient></defs><rect width="64" height="64" rx="17" fill="url(#fir)"/><path d="m32 10 4.1 14L50 28.5l-13.9 4.3L32 47l-4.1-14.2L14 28.5 27.9 24 32 10Z" fill="#e9cd96"/><circle cx="47" cy="47" r="4.1" fill="#9c4651"/><circle cx="18" cy="45" r="2.4" fill="#fff9e9"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Atelier Universal Squishy Club">
+<defs><linearGradient id="gum" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffb2d3"/><stop offset="1" stop-color="#dd4e89"/></linearGradient>
+<linearGradient id="back" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fef1f7"/><stop offset="1" stop-color="#e3f9ef"/></linearGradient></defs>
+<rect width="64" height="64" rx="18" fill="url(#back)"/>
+<path d="M12 38c0-13 9-21 20-21s20 8 20 21c0 10-9 18-20 18S12 48 12 38Z" fill="url(#gum)" stroke="#b63a75" stroke-width="1.6"/>
+<path d="M24 20 38 5l13 21-27-6Z" fill="#c93064" stroke="#a62855" stroke-width="1.6"/>
+<path d="M22 21q14-7 28 6" fill="none" stroke="#fffaf7" stroke-width="6" stroke-linecap="round"/>
+<circle cx="38" cy="5" r="5" fill="#fff"/>
+<ellipse cx="25" cy="37" rx="2.5" ry="3" fill="#4b2c43"/><ellipse cx="40" cy="37" rx="2.5" ry="3" fill="#4b2c43"/>
+<path d="M27 44q5 7 10 0" stroke="#81315b" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+<ellipse cx="19" cy="42" rx="4" ry="2.3" fill="#f48bb7" opacity=".8"/><ellipse cx="45" cy="42" rx="4" ry="2.3" fill="#f48bb7" opacity=".8"/>
+<path d="M7 15l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5Z" fill="#f7cb74"/>
+</svg>
