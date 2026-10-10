@@ -1,4 +1,4 @@
-import {products,categories,photos,articles,money,productById} from './catalog.js';
+import {products,categories,photos,articles,money,productById} from './catalog.js?v=gallery-4';
 
 const $ = (s, root=document) => root.querySelector(s);
 const $$ = (s, root=document) => [...root.querySelectorAll(s)];
@@ -32,7 +32,7 @@ function missingProductImage(p){
 }
 function productCard(p){
   const href=p.supplierId ? './produit-'+encodeURIComponent(p.supplierId)+'.html' : link('produit',{id:p.id});
-  const media=p.image ? image(p.image,'Photo d’illustration de '+p.name,'','loading="lazy" decoding="async" width="700" height="820"') : missingProductImage(p);
+  const media=p.image ? image(p.image,(p.source==='teemdrop'?'Photographie du ':'Photo d’illustration de ')+p.name,'','loading="lazy" decoding="async" width="700" height="820"') : missingProductImage(p);
   return '<article class="product-card" data-product-card data-category="'+escapeHTML(p.category)+'" data-name="'+escapeHTML(p.name)+'">'
     +'<div class="product-image"><a href="'+href+'" aria-label="Découvrir '+escapeHTML(p.name)+'">'+media+'</a>'
     +(p.tag?'<span class="product-badge">'+escapeHTML(p.tag)+'</span>':'')
@@ -57,7 +57,7 @@ function arrivalsSection(){
   const arrivals=products.filter(p=>p.source==='teemdrop');
   return '<section class="section arrivals-section" id="nouveautes"><div class="wrap">'
     +heading('DANS LA BOUTIQUE','Les nouveaux produits','<a class="tiny-link" href="'+link('collection',{cat:'Nouveautés'})+'">VOIR LES NOUVEAUTÉS ↗</a>')
-    +'<p class="arrivals-lead">Découvrez notre calendrier de l’Avent Squishy Mystery Dumpling : 24 surprises à malaxer, au prix de 29,90 € TTC. Les visuels et informations de sécurité du fabricant restent à confirmer.</p>'
+    +'<p class="arrivals-lead">Découvrez notre calendrier de l’Avent Mystery Dumpling : 24 surprises squishy, deux photos produit et un prix de 29,90 € TTC. Le deuxième article sera présenté prochainement.</p>'
     +'<div class="product-grid">'+arrivals.map(productCard).join('')+'</div></div></section>';
 }
 
@@ -95,11 +95,16 @@ function productPage(){
   const more=related.length>=2?related:products.filter(other=>other.id!==p.id).slice(0,4);
   const hasPrice=Number.isFinite(p.price);
   const ready=hasPrice&&Boolean(p.image)&&p.source!=='teemdrop';
-  const gallery=ready
-    ?'<div class="detail-main-photo">'+image(p.image,'Photo d’illustration de '+p.name,'','fetchpriority="high" width="970" height="1120"')+'</div>'
-      +'<div class="detail-thumb">'+image(photos.home,'Inspiration de matières et ambiances','','loading="lazy" width="530" height="380"')+'</div>'
-      +'<div class="detail-thumb">'+image(photos.story,'Inspiration intérieur naturel','','loading="lazy" width="530" height="380"')+'</div>'
-    :'<div class="detail-main-photo detail-main-photo--pending">'+missingProductImage(p)+'</div>';
+  const gallery=p.source==='teemdrop'&&Array.isArray(p.gallery)&&p.gallery.length
+    ?'<div class="detail-main-photo detail-main-photo--product">'+image(p.gallery[0].src,p.gallery[0].alt,'product-gallery-main','data-gallery-main fetchpriority="high" loading="eager" decoding="async" width="900" height="900"')+'</div>'
+      +'<div class="product-gallery-controls" role="group" aria-label="Photos du produit">'
+      +p.gallery.map((photo,i)=>'<button class="product-gallery-thumb" type="button" data-gallery-src="'+escapeHTML(photo.src)+'" data-gallery-alt="'+escapeHTML(photo.alt)+'" aria-label="Afficher la photo '+(i+1)+' du produit" aria-pressed="'+(i===0?'true':'false')+'">'
+        +image(photo.src,photo.alt,'','loading="lazy" decoding="async" width="130" height="130"')+'</button>').join('')+'</div>'
+    :ready
+      ?'<div class="detail-main-photo">'+image(p.image,'Photo d’illustration de '+p.name,'','fetchpriority="high" width="970" height="1120"')+'</div>'
+        +'<div class="detail-thumb">'+image(photos.home,'Inspiration de matières et ambiances','','loading="lazy" width="530" height="380"')+'</div>'
+        +'<div class="detail-thumb">'+image(photos.story,'Inspiration intérieur naturel','','loading="lazy" width="530" height="380"')+'</div>'
+      :'<div class="detail-main-photo detail-main-photo--pending">'+missingProductImage(p)+'</div>';
   const actions=ready
     ?'<label>Finition / Format</label><div class="option-row" id="product-options">'
       +p.colors.map((c,i)=>'<button class="option-btn '+(i===0?'selected':'')+'" type="button" data-option="'+escapeHTML(c)+'" aria-pressed="'+(i===0)+'">'+escapeHTML(c)+'</button>').join('')
@@ -107,19 +112,20 @@ function productPage(){
       +'<div><button class="dark-btn detail-cta" type="button" data-add-detail="'+escapeHTML(p.id)+'">AJOUTER À MA SÉLECTION '+iconArrow+'</button></div>'
       +'<p class="demo-note">Panier de démonstration uniquement. Aucun paiement réel.</p>'
     :'<div class="product-awaiting-data"><strong>Informations complémentaires à venir</strong>'
-      +'<p>'+(hasPrice?'Le prix de vente conseillé est indiqué. Les photographies et les renseignements de sécurité du fabricant restent à vérifier avant toute mise en vente.':'Les photographies, caractéristiques, variantes et prix doivent être confirmés. Ce produit ne peut pas encore être ajouté au panier.')+'</p>'
+      +'<p>'+(hasPrice?'Photos produit, prix et caractéristiques renseignés. Les documents de sécurité du jouet, l’âge conseillé et les conditions de livraison restent à vérifier avant toute mise en vente.':'Les photographies, caractéristiques, variantes et prix doivent être confirmés. Ce produit ne peut pas encore être ajouté au panier.')+'</p>'
       +'<dl><div><dt>Référence produit</dt><dd>'+escapeHTML(p.supplierId||p.id)+'</dd></div>'
       +'<div><dt>Prix affiché</dt><dd>'+(hasPrice?money(p.price)+' TTC':'À confirmer')+'</dd></div>'
-      +'<div><dt>Variantes</dt><dd>Non renseignées</dd></div></dl></div>';
+      +'<div><dt>Variante</dt><dd>'+escapeHTML(p.variantName||'Non renseignée')+'</dd></div></dl></div>';
   return crumb(p.category,p.name)
     +'<section class="section" style="padding-top:18px"><div class="wrap"><div class="detail">'
     +'<div class="detail-gallery">'+gallery+'</div>'
     +'<div class="detail-copy"><span class="overline">ATELIER UNIVERSAL &nbsp; — &nbsp; '+escapeHTML(p.category)+'</span>'
     +'<h1>'+escapeHTML(p.name)+'</h1><div class="detail-price">'+(hasPrice?money(p.price)+(p.source==='teemdrop'?'<span class="price-tax-note"> TTC</span>':''):'Prix à confirmer')+'</div>'
     +'<p>'+escapeHTML(p.description)+'</p><hr>'
-    +'<span class="pill">'+(ready?'PHOTOGRAPHIE D’ILLUSTRATION':'INFORMATIONS EN COURS DE VÉRIFICATION')+'</span>'
+    +'<span class="pill">'+(ready?'PHOTOGRAPHIE D’ILLUSTRATION':p.image?'PHOTOS PRODUIT · VENTE NON ACTIVÉE':'INFORMATIONS EN COURS DE VÉRIFICATION')+'</span>'
     +actions
-    +'<details class="detail-meta"><summary>Description & caractéristiques</summary><p>'+escapeHTML(p.materials)+'</p></details>'
+    +'<details class="detail-meta"><summary>Description & caractéristiques</summary><p>'+escapeHTML(p.materials)+'</p>'
+    +(p.specifications?.length?'<dl class="product-specs">'+p.specifications.map(spec=>'<div><dt>'+escapeHTML(spec.label)+'</dt><dd>'+escapeHTML(spec.value)+'</dd></div>').join('')+'</dl>':'')+'</details>'
     +'<details class="detail-meta"><summary>Livraison & retours</summary><p>'+escapeHTML(p.shippingInfo||'Modalités à définir pour une boutique commerciale réelle. Aucun service de livraison n’est proposé ici.')+'</p></details>'
     +(p.safetyNote?'<details class="detail-meta"><summary>Sécurité et conformité des jouets</summary><p>'+escapeHTML(p.safetyNote)+'</p></details>':'')
     +'</div></div></div></section>'
@@ -172,6 +178,7 @@ document.addEventListener('click',e=>{
   if(e.target.closest('[data-cart-close]')||e.target.closest('[data-cart-overlay]'))closeCart();
   const add=e.target.closest('[data-add]');if(add)addToCart(add.dataset.add,1,productById(add.dataset.add)?.colors[0]||'');
   const detailed=e.target.closest('[data-add-detail]');if(detailed){const qty=Math.max(1,Math.min(99,Number($('#detail-qty')?.value)||1));const option=$('.option-btn.selected')?.dataset.option||'';addToCart(detailed.dataset.addDetail,qty,option)}
+  const galleryThumb=e.target.closest('[data-gallery-src]');if(galleryThumb){const hero=$('[data-gallery-main]');if(hero){hero.src=galleryThumb.dataset.gallerySrc;hero.alt=galleryThumb.dataset.galleryAlt;$('[data-gallery-src]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn===galleryThumb)))}}
   const option=e.target.closest('[data-option]');if(option){$$('[data-option]').forEach(b=>{b.classList.remove('selected');b.setAttribute('aria-pressed','false')});option.classList.add('selected');option.setAttribute('aria-pressed','true')}
   const filter=e.target.closest('[data-home-filter]');if(filter)filterHome(filter.dataset.homeFilter);
   const change=e.target.closest('[data-cart-change]');if(change)changeQuantity(change.dataset.cartChange,Number(change.dataset.delta));

@@ -23,3 +23,18 @@
 /* Prices may be published while product imagery and toy-safety documentation are pending. */
 .price-tax-note{font-size:.72em;font-weight:650;color:#657567;letter-spacing:.01em;margin-left:4px}
 .product-awaiting-data strong{line-height:1.4}
+
+/* Local product photographs — retain their full composition, enable accessible gallery switching. */
+.detail-main-photo--product{background:#fffdf8;aspect-ratio:1/1}
+.detail-main-photo--product img{object-fit:contain;width:100%;height:100%;background:#fff}
+.product-gallery-controls{grid-column:1/-1;display:flex;align-items:center;flex-wrap:wrap;gap:11px}
+.product-gallery-thumb{display:block;width:104px;height:104px;padding:4px;border-radius:11px;border:2px solid #e7dfd3;background:#fff;cursor:pointer;transition:border-color .18s,box-shadow .18s}
+.product-gallery-thumb img{display:block;width:100%;height:100%;object-fit:cover;border-radius:6px}
+.product-gallery-thumb:hover,.product-gallery-thumb[aria-pressed="true"]{border-color:#21533c;box-shadow:0 0 0 2px #21533c26}
+.product-gallery-thumb:focus-visible{outline:3px solid #9a4b58;outline-offset:3px}
+.product-specs{margin:13px 0 4px;display:grid;gap:11px}
+.product-specs>div{display:grid;grid-template-columns:minmax(0,1fr) 1.4fr;gap:12px;border-bottom:1px solid #e4e8de;padding:7px 0;font-size:13px}
+.product-specs dt{color:#617264}
+.product-specs dd{margin:0;color:#163d2e;font-weight:720}
+@media(max-width:760px){.product-gallery-thumb{width:82px;height:82px}.product-specs>div{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){.product-gallery-thumb{transition:none}}
